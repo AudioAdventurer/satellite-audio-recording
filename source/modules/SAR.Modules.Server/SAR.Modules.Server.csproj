@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="LiteDB" Version="4.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libraries\SAR.Libraries.Common\SAR.Libraries.Common.csproj" />
+    <ProjectReference Include="..\..\libraries\SAR.Libraries.Database\SAR.Libraries.Database.csproj" />
+    <ProjectReference Include="..\SAR.Modules.Script\SAR.Modules.Script.csproj" />
+  </ItemGroup>
+
+</Project>

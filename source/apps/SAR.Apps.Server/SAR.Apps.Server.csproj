@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="wwwroot\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libraries\Autofac.Extensions.DependencyInjection\Autofac.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\libraries\SAR.Libraries.Common\SAR.Libraries.Common.csproj" />
+    <ProjectReference Include="..\..\libraries\SAR.Libraries.Database\SAR.Libraries.Database.csproj" />
+    <ProjectReference Include="..\..\modules\SAR.Modules.Script\SAR.Modules.Script.csproj" />
+    <ProjectReference Include="..\..\modules\SAR.Modules.Server\SAR.Modules.Server.csproj" />
+  </ItemGroup>
+
+</Project>

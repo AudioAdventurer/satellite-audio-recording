@@ -36,6 +36,7 @@ namespace SAR.Apps.Server.Modules
 
             //Local Services
             builder.RegisterType<AuthService>();
+            builder.RegisterType<ProjectService>();
         }
 
         private void SetupFolders()

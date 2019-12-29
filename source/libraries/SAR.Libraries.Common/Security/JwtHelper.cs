@@ -36,6 +36,7 @@ namespace SAR.Libraries.Common.Security
         {
             ClaimsIdentity claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim("UserId", userSession.UserId.ToString()));
+            claimsIdentity.AddClaim(new Claim("PersonId", userSession.PersonId.ToString()));
             claimsIdentity.AddClaim(new Claim("SessionId", userSession.Id.ToString()));
             claimsIdentity.AddClaim(new Claim("Email", userSession.Email));
             claimsIdentity.AddClaim(new Claim("GivenName", userSession.GivenName));

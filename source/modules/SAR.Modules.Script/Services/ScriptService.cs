@@ -53,6 +53,23 @@ namespace SAR.Modules.Script.Services
             return projects.Values.ToList();
         }
 
+        public bool HasAccessToProject(Guid personId, Guid projectId)
+        {
+            var access = _projectAccessRepo.Get(projectId, personId);
+
+            if (access != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public Project GetProject(Guid projectId)
+        {
+            return _projectRepo.GetById(projectId);
+        }
+
         public void Save(Project project)
         {
             _projectRepo.Save(project);

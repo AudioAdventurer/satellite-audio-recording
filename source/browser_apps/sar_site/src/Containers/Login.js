@@ -9,7 +9,7 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
 
-        let username = SarService.getCookie("email");
+        let username = SarService.getCookie("username");
 
         this.state = {
             isLoading:false,

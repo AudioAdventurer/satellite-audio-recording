@@ -19,5 +19,31 @@ namespace SAR.Apps.Server.Services
         {
             return _scriptService.GetProjectsByPerson(personId);
         }
+
+        public bool HasAccessToProject(Guid personId, Guid projectId)
+        {
+            return _scriptService.HasAccessToProject(personId, projectId);
+        }
+
+        public Project GetProject(Guid personId, Guid projectId)
+        {
+            if (HasAccessToProject(personId, projectId))
+            {
+                return _scriptService.GetProject(projectId);
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public void SaveProject(Guid personId, Project project)
+        {
+            if (HasAccessToProject(personId, project.Id))
+            {
+                _scriptService.Save(project);
+                return;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
     }
 }

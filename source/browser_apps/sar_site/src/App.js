@@ -31,11 +31,6 @@ export default class App extends Component {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Item>
-            <LinkContainer to="/">
-              <Nav.Link>Home</Nav.Link>
-            </LinkContainer>
-          </Nav.Item>
-          <Nav.Item>
             <LinkContainer to="/projects">
               <Nav.Link>Projects</Nav.Link>
             </LinkContainer>

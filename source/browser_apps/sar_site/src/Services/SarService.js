@@ -2,10 +2,29 @@ import Environment from "../env.js";
 import axios from 'axios';
 import AuthDao from "../Data/AuthDao";
 import SetupDao from "../Data/SetupDao";
+import ProjectDao from "../Data/ProjectDao";
 
 class SarService {
   static JWT = "";
 
+  //Projects
+  static getProjects() {
+    const dao = new ProjectDao(Environment.BASE_URL);
+    return dao.getProjects();
+  }
+
+  static getProject(id) {
+    const dao = new ProjectDao(Environment.BASE_URL);
+    return dao.getProject(id);
+  }
+
+  static saveProject(proj) {
+    const dao = new ProjectDao(Environment.BASE_URL);
+    return dao.saveProject(proj);
+  }
+
+
+  //Authentication and setup
   static login(username, password) {
     const dao = new AuthDao(Environment.BASE_URL);
     return dao.login(username, password);

@@ -46,6 +46,7 @@ namespace SAR.Apps.Server.Services
                         Email = user.Email,
                         FamilyName = person.FamilyName,
                         GivenName = person.GivenName,
+                        PersonId = person.Id,
                         UserId = user.Id
                     };
 

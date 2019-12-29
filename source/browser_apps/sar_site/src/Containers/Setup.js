@@ -30,7 +30,7 @@ export default class Setup extends Component {
           });
         }
       }).catch(e => {
-
+        alert(e.message);
       });
   }
 
@@ -72,7 +72,7 @@ export default class Setup extends Component {
         <Col>
           <Row>
             <Col>
-              <h1>Setup</h1>
+              <h2>Setup</h2>
             </Col>
           </Row>
           <Row>

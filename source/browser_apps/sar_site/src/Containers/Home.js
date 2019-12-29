@@ -26,12 +26,21 @@ export default class Home extends Component {
     }
 
     renderLander() {
-        return (
-            <div className="lander">
-                <h1>Satellite Audio Recorder</h1>
-                <p>A tool for creating Audio Drama when actors are remote.</p>
-            </div>
-        );
+      return (
+        <div className="lander">
+          <h1>Satellite Audio Recorder</h1>
+          <p>This is a tool designed to assist with creating Audio Drama when actors are primarily in remote locations.
+            It manages collection of one or more takes of each line in the script.  Feed back can be supplied,
+            and additional takes can be requested on specific lines.  It allows the audio engineer to specify a file
+            naming format and extract all audio files into a standardized folder structure.
+          </p>
+          <p>While this tool can be used for editing scripts, it is not intended to replace other tools that are focused
+            on script writing.  Tracking the audio recordings back to specific lines causes more structure to be forced
+            onto the script, which would make it less fluid for writing.  Once your script is ready for actors to record
+            the audio the script can be loaded in a Fountain.io format.
+          </p>
+        </div>
+      );
     }
 
     renderProjects() {

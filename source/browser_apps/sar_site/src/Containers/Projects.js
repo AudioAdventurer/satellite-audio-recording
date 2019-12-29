@@ -86,17 +86,21 @@ export default class Projects extends Component {
             </div>
           </Col>
         </Row>
-        <Table striped bordered hover>
-          <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Language</th>
-            <th>Locale</th>
-          </tr>
-          </thead>
-          { this.renderTableBody(this.state.projects) }
-        </Table>
+        <Row>
+          <Col>
+            <Table striped bordered hover>
+              <thead>
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Language</th>
+                <th>Locale</th>
+              </tr>
+              </thead>
+              { this.renderTableBody(this.state.projects) }
+            </Table>
+          </Col>
+        </Row>
       </div>
     );
   }

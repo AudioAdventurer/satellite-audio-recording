@@ -115,6 +115,17 @@ export default class Project extends Component {
             </Form>
           </Col>
         </Row>
+        <Row>
+          <Col>&nbsp;</Col>
+        </Row>
+        <Row>
+          <Col>
+            <h2>Load Script</h2>
+            <p>Warning - this will remove all scenes and characters and reset this project.</p>
+            <p>A script in the Fountain format can be loaded automatically.</p>
+            <Button>Select Script</Button>
+          </Col>
+        </Row>
       </div>
     );
   }

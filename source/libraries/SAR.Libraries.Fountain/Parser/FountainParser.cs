@@ -17,8 +17,13 @@ namespace SAR.Libraries.Fountain.Parser
         {
             var output = new List<Element>();
 
+            var normalizedLineEndings = Regex.Replace(
+                script,
+                FountainRegEx.UNIVERSAL_LINE_BREAKS_PATTERN,
+                FountainTemplates.UNIVERSAL_LINE_BREAKS_TEMPLATE);
+
             //Process the title element
-            var title = GetTitle(script);
+            var title = GetTitle(normalizedLineEndings);
             var titleElement = ProcessTitle(title);
             if (titleElement != null)
             {
@@ -26,7 +31,7 @@ namespace SAR.Libraries.Fountain.Parser
             }
             
             //Process the remaining elements
-            var body = GetBody(script);
+            var body = GetBody(normalizedLineEndings);
             output.AddRange(ProcessBody(body));
 
             return output;
@@ -75,10 +80,6 @@ namespace SAR.Libraries.Fountain.Parser
             // Sanitize < and > chars for conversion to the markup
             working = working.Replace("&lt;", "<");
             working = working.Replace("&gt;", ">");
-
-            working = Regex.Replace(working,
-                FountainRegEx.UNIVERSAL_LINE_BREAKS_PATTERN,
-                FountainTemplates.UNIVERSAL_LINE_BREAKS_TEMPLATE);
 
             working = Regex.Replace(working,
                 FountainRegEx.BLOCK_COMMENT_PATTERN,

@@ -12,6 +12,7 @@ export default class LoaderButton extends Component {
                 type={ this.props.type }
                 variant={ this.props.variant }
                 size={ this.props.size }
+                onClick={this.props.onClick}
             >
                 { !this.props.isLoading ? this.props.text : this.props.loadingText }
             </Button>

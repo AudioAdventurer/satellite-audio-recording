@@ -20,6 +20,26 @@ export default class BaseDao {
     });
   }
 
+  writeFile(command, formData) {
+    return new Promise((resolve, reject) => {
+      const url = this.baseUrl + command;
+
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      };
+
+      axios.post(url, formData, config)
+        .then(res => {
+          resolve(res.data);
+        })
+        .catch(error => {
+          reject(error);
+        })
+    });
+  }
+
   read(command) {
     return new Promise((resolve, reject) => {
       const url = this.baseUrl + command;

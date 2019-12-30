@@ -21,7 +21,6 @@ namespace SAR.Libraries.Database.Repos
         public T GetById(Guid id)
         {
             var obj = Collection.FindById(id);
-
             return (T) obj;
         }
 
@@ -37,6 +36,11 @@ namespace SAR.Libraries.Database.Repos
             {
                 Collection.Update(record);
             }
+        }
+
+        public void Delete(Guid id)
+        {
+            Collection.Delete(id);
         }
     }
 }

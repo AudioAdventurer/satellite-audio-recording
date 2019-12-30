@@ -14,5 +14,7 @@ export default class ProjectDao extends BaseDao {
     return this.write("/projects", proj);
   }
 
-
+  importFountain(id, formData) {
+    return this.writeFile(`/projects/${id}/import/fountain`, formData);
+  }
 }

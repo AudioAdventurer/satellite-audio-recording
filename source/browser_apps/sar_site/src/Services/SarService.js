@@ -23,6 +23,10 @@ class SarService {
     return dao.saveProject(proj);
   }
 
+  static importFountain(id, formData) {
+    const dao = new ProjectDao(Environment.BASE_URL);
+    return dao.importFountain(id, formData);
+  }
 
   //Authentication and setup
   static login(username, password) {
@@ -67,8 +71,6 @@ class SarService {
     }
     return "";
   }
-
-
 }
 
 export default SarService;

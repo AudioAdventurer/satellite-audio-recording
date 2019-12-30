@@ -19,5 +19,11 @@ namespace SAR.Modules.Script.Repos
             Query q = Query.EQ("SceneId", sceneId);
             return Collection.Find(q);
         }
+
+        public void DeleteByScene(Guid sceneId)
+        {
+            Query q = Query.EQ("SceneId", sceneId);
+            Collection.Delete(q);
+        }
     }
 }

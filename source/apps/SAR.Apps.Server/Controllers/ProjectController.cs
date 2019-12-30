@@ -52,7 +52,7 @@ namespace SAR.Apps.Server.Controllers
 
         [HttpPost]
         [Route("api/projects")]
-        public ActionResult GetProject([FromBody] Project project)
+        public ActionResult SaveProject([FromBody] Project project)
         {
             var personId = User.GetPersonId();
 

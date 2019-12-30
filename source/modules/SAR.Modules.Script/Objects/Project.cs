@@ -10,5 +10,6 @@ namespace SAR.Modules.Script.Objects
         public string Description { get; set; }
         public string Language { get; set; }
         public string Locale { get; set; }
+
     }
 }

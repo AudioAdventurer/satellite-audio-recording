@@ -113,7 +113,7 @@ namespace SAR.Apps.Server.Services
             ProjectAccess pa = new ProjectAccess
             {
                 ProjectId = proj.Id,
-                PersonId = p.Id
+                PersonId = p.Id,
             };
             pa.AccessTypes.Add(AccessTypes.Owner);
 

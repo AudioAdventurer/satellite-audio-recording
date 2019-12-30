@@ -15,7 +15,7 @@ namespace SAR.Modules.Script.Repos
             Collection.EnsureIndex("PersonId", false);
         }
 
-        public ProjectAccess Get(Guid projectId, Guid personId)
+        public ProjectAccess Get(Guid personId, Guid projectId)
         {
             Query q = Query.And(
                 Query.EQ("ProjectId", projectId), 
@@ -34,6 +34,12 @@ namespace SAR.Modules.Script.Repos
         {
             Query q = Query.EQ("PersonId", personId);
             return Collection.Find(q);
+        }
+
+        public void DeleteByProject(Guid projectId)
+        {
+            Query q = Query.EQ("ProjectId", projectId);
+            Collection.Delete(q);
         }
     }
 }

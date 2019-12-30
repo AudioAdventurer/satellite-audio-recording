@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\libraries\Autofac.Extensions.DependencyInjection\Autofac.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\libraries\SAR.Libraries.Common\SAR.Libraries.Common.csproj" />
     <ProjectReference Include="..\..\libraries\SAR.Libraries.Database\SAR.Libraries.Database.csproj" />
+    <ProjectReference Include="..\..\modules\SAR.Modules.Script.Importer\SAR.Modules.Script.Importer.csproj" />
     <ProjectReference Include="..\..\modules\SAR.Modules.Script\SAR.Modules.Script.csproj" />
     <ProjectReference Include="..\..\modules\SAR.Modules.Server\SAR.Modules.Server.csproj" />
   </ItemGroup>

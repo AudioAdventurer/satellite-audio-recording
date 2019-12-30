@@ -2,6 +2,7 @@ import "./Project.css";
 import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Form, Button} from "react-bootstrap";
+import LoaderButton from "../Components/LoaderButton";
 
 export default class Project extends Component {
   constructor(props) {
@@ -14,7 +15,9 @@ export default class Project extends Component {
       projectTitle: "",
       description: "",
       language: "",
-      locale:""
+      locale:"",
+      selectedFile:"",
+      importingScript:false
     };
 
     this.loadData(id);
@@ -59,10 +62,45 @@ export default class Project extends Component {
     }
   };
 
+  validateFileSelected() {
+    return this.state.selectedFile !== "";
+  }
+
   handleChange = event => {
     this.setState({
       [event.target.id]: event.target.value
     });
+  };
+
+  handleSelectedFile = event => {
+    this.setState({
+      selectedFile: event.target.files[0]
+    });
+  }
+
+  loadFile = event => {
+    event.preventDefault();
+
+    this.setState({
+      importingScript:true
+    });
+
+    let data = new FormData();
+    data.append('file', this.state.selectedFile);
+
+    SarService.importFountain(this.state.id, data)
+      .then(r=>{
+        this.setState({
+          importingScript:false
+        });
+      })
+      .catch(e=>{
+        alert(e.message);
+        this.setState({
+          importingScript:false
+        });
+      });
+
   };
 
   render() {
@@ -123,7 +161,20 @@ export default class Project extends Component {
             <h2>Load Script</h2>
             <p>Warning - this will remove all scenes and characters and reset this project.</p>
             <p>A script in the Fountain format can be loaded automatically.</p>
-            <Button>Select Script</Button>
+            <Form onSubmit={this.loadFile}>
+              <Form.Group controlId="selectedFile">
+                <Form.Label>Upload Fountain File</Form.Label>
+                <Form.Control
+                  type="file"
+                  onChange={this.handleSelectedFile}/>
+              </Form.Group>
+              <LoaderButton
+                isLoading={this.state.importingScript}
+                loadingText = "Importing ..."
+                disabled={!this.validateFileSelected}
+                text="Import Script"
+                type="submit" />
+            </Form>
           </Col>
         </Row>
       </div>

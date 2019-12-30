@@ -9,6 +9,7 @@ namespace SAR.Modules.Script.Services
 {
     public class ScriptService
     {
+        private readonly CharacterRepo _characterRepo;
         private readonly ElementRepo _elementRepo;
         private readonly PersonRepo _personRepo;
         private readonly ProjectAccessRepo _projectAccessRepo;
@@ -16,12 +17,14 @@ namespace SAR.Modules.Script.Services
         private readonly SceneRepo _sceneRepo;
 
         public ScriptService(
+            CharacterRepo characterRepo,
             ElementRepo elementRepo,
             PersonRepo personRepo,
             ProjectAccessRepo projectAccessRepo,
             ProjectRepo projectRepo,
             SceneRepo sceneRepo)
         {
+            _characterRepo = characterRepo;
             _elementRepo = elementRepo;
             _personRepo = personRepo;
             _projectAccessRepo = projectAccessRepo;
@@ -55,7 +58,7 @@ namespace SAR.Modules.Script.Services
 
         public bool HasAccessToProject(Guid personId, Guid projectId)
         {
-            var access = _projectAccessRepo.Get(projectId, personId);
+            var access = _projectAccessRepo.Get(personId, projectId);
 
             if (access != null)
             {
@@ -68,6 +71,11 @@ namespace SAR.Modules.Script.Services
         public Project GetProject(Guid projectId)
         {
             return _projectRepo.GetById(projectId);
+        }
+
+        public ProjectAccess GetProjectAccess(Guid personId, Guid projectId)
+        {
+            return _projectAccessRepo.Get(personId, projectId);
         }
 
         public void Save(Project project)
@@ -83,6 +91,93 @@ namespace SAR.Modules.Script.Services
         public void Save(ProjectAccess projectAccess)
         {
             _projectAccessRepo.Save(projectAccess);
+        }
+
+        public void Save(Scene scene)
+        {
+            _sceneRepo.Save(scene);
+        }
+
+        public void Save(Element element)
+        {
+            _elementRepo.Save(element);
+        }
+
+        public void Save(Character character)
+        {
+            _characterRepo.Save(character);
+        }
+
+        public IEnumerable<Scene> GetScenesByProject(Guid projectId)
+        {
+            return _sceneRepo.GetByProject(projectId);
+        }
+
+        public IEnumerable<Character> GetCharactersByProject(Guid projectId)
+        {
+            return _characterRepo.GetByProject(projectId);
+        }
+
+        public IEnumerable<Element> GetElementsByScene(Guid sceneId)
+        {
+            return _elementRepo.GetByScene(sceneId);
+        }
+
+        public void DeleteElement(Guid elementId)
+        {
+            _elementRepo.Delete(elementId);
+        }
+
+        public void DeleteElementsByScene(Guid sceneId)
+        {
+            _elementRepo.Delete(sceneId);
+        }
+
+        public void DeleteScene(Guid sceneId)
+        {
+            _sceneRepo.Delete(sceneId);
+        }
+
+        public void DeleteCharacter(Guid characterId)
+        {
+            _characterRepo.Delete(characterId);
+        }
+
+        public void DeleteProjectAccess(Guid projectAccessId)
+        {
+            _projectAccessRepo.Delete(projectAccessId);
+        }
+
+        public void DeleteProject(Guid projectId)
+        {
+            _projectRepo.Delete(projectId);
+        }
+
+        public void DeleteCharactersByProject(Guid projectId)
+        {
+            _characterRepo.DeleteByProject(projectId);
+        }
+
+        public void DeleteProjectAccessByProject(Guid projectId)
+        {
+            _projectAccessRepo.DeleteByProject(projectId);
+        }
+
+        public void DeleteProjectScript(Guid projectId)
+        {
+            //Get All Scenes
+            var scenes = GetScenesByProject(projectId);
+            foreach (var scene in scenes)
+            {
+                //Delete Elements for the scene
+                DeleteElementsByScene(scene.Id);
+
+                //Delete the scene
+                DeleteScene(scene.Id);
+            }
+
+            //Delete All Characters
+            DeleteCharactersByProject(projectId);
         }
     }
 }

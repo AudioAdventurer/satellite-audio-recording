@@ -15,6 +15,7 @@ namespace SAR.Modules.Script.Modules
         protected override void Load(ContainerBuilder builder)
         {
             //Repos
+            builder.RegisterType<CharacterRepo>();
             builder.RegisterType<ElementRepo>();
             builder.RegisterType<PersonRepo>();
             builder.RegisterType<ProjectAccessRepo>();

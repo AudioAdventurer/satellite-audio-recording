@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using SAR.Apps.Server.Modules;
 using SAR.Libraries.Common.Interfaces;
+using SAR.Modules.Script.Importer.Modules;
 using SAR.Modules.Script.Modules;
 using SAR.Modules.Server.Modules;
 
@@ -51,6 +52,9 @@ namespace SAR.Apps.Server
 
             builder.RegisterModule(
                 new ServerModule());
+
+            builder.RegisterModule(
+                new ImporterModule());
         }
 
         public IConfigurationRoot Configuration { get; private set; }

@@ -27,7 +27,7 @@ namespace SAR.Libraries.Fountain.Parser
             var titleElement = ProcessTitle(title);
             if (titleElement != null)
             {
-                output.Append(titleElement);
+                output.Add(titleElement);
             }
             
             //Process the remaining elements
@@ -41,11 +41,8 @@ namespace SAR.Libraries.Fountain.Parser
         {
             if (!string.IsNullOrWhiteSpace(title))
             {
-                if (Regex.IsMatch(title, FountainRegEx.TITLE_PAGE_PATTERN))
-                {
-                    TitleElement titleElement = new TitleElement(title);
-                    return titleElement;
-                }
+                TitleElement titleElement = new TitleElement(title);
+                return titleElement;
             }
 
             return null;
@@ -226,7 +223,7 @@ namespace SAR.Libraries.Fountain.Parser
 
             if (position >= 0)
             {
-                var output = script.Substring(position + 1);
+                var output = script.Substring(position + 2);
                 return output;
             }
 
@@ -239,8 +236,14 @@ namespace SAR.Libraries.Fountain.Parser
 
             if (position >= 0)
             {
-                var output = script.Substring(0, position + 1);
-                return output;
+                var title = script.Substring(0, position + 2);
+
+                var match = Regex.Match(title, FountainRegEx.TITLE_PAGE_PATTERN);
+
+                if (match.Groups.Count>0)
+                {
+                    return title;
+                }
             }
 
             return "";

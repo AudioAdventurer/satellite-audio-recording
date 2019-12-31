@@ -14,8 +14,6 @@ export default class Project extends Component {
       id: id,
       projectTitle: "",
       description: "",
-      language: "",
-      locale:"",
       selectedFile:"",
       importingScript:false
     };
@@ -46,8 +44,6 @@ export default class Project extends Component {
         "Id": this.state.id,
         "Title": this.state.projectTitle,
         "Description": this.state.description,
-        "Language": this.state.language,
-        "Locale": this.state.locale
       };
 
       SarService.saveProject(proj)
@@ -130,22 +126,6 @@ export default class Project extends Component {
                   value={this.state.description}
                   onChange={this.handleChange}
                   placeholder="Enter description"/>
-              </Form.Group>
-              <Form.Group controlId="language">
-                <Form.Label>Language</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={this.state.language}
-                  onChange={this.handleChange}
-                  placeholder="Enter language"/>
-              </Form.Group>
-              <Form.Group controlId="locale">
-                <Form.Label>Locale</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={this.state.locale}
-                  onChange={this.handleChange}
-                  placeholder="Enter locale"/>
               </Form.Group>
               <Button variant="primary" type="submit">
                 Save

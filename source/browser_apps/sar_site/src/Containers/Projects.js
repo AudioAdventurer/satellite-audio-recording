@@ -51,8 +51,6 @@ export default class Projects extends Component {
                 </Row>
               </td>
               <td>{item.Description}</td>
-              <td>{item.Language}</td>
-              <td>{item.Locale}</td>
             </tr>
           );
         } else {
@@ -93,8 +91,6 @@ export default class Projects extends Component {
               <tr>
                 <th>Title</th>
                 <th>Description</th>
-                <th>Language</th>
-                <th>Locale</th>
               </tr>
               </thead>
               { this.renderTableBody(this.state.projects) }

@@ -8,7 +8,6 @@ namespace SAR.Modules.Script.Objects
     {
         public Element()
         {
-            Content = new Content();
             CharacterIds = new List<Guid>();
         }
 
@@ -18,7 +17,7 @@ namespace SAR.Modules.Script.Objects
 
         public string Type { get; set; }
 
-        public Content Content { get; set; }
+        public string Content { get; set; }
 
         public List<Guid> CharacterIds { get; set; }
     }

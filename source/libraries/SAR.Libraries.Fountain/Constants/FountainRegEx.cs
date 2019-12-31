@@ -35,5 +35,7 @@
 
         public const string DUAL_DIALOGUE_PATTERN = @"";
         public const string CENTERED_TEXT_PATTERN = @"";
+
+        
     }
 }

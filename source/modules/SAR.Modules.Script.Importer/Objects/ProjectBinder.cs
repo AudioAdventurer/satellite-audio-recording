@@ -8,13 +8,13 @@ namespace SAR.Modules.Script.Importer.Objects
         public ProjectBinder()
         {
             SceneBinders = new List<SceneBinder>();
-            Characters = new List<Character>();
+            Characters = new Dictionary<string, Character>();
         }
 
         public Project Project { get; set; }
 
         public List<SceneBinder> SceneBinders { get; set; }
 
-        public List<Character> Characters { get; set; }
+        public Dictionary<string, Character> Characters { get; set; }
     }
 }

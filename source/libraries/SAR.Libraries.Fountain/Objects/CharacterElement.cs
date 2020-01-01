@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using SAR.Libraries.Fountain.Constants;
 
 namespace SAR.Libraries.Fountain.Objects
 {
@@ -25,7 +23,10 @@ namespace SAR.Libraries.Fountain.Objects
 
             foreach (Match match in matches)
             {
-                Extensions.Add(match.Groups[0].Value);
+                string value = match.Groups[0].Value
+                    .Replace("(", "")
+                    .Replace(")", "");
+                Extensions.Add(value);
             }
         }
 

@@ -16,11 +16,10 @@ namespace SAR.Modules.Script.Modules
         {
             //Repos
             builder.RegisterType<CharacterRepo>();
-            builder.RegisterType<ElementRepo>();
+            builder.RegisterType<ScriptElementRepo>();
             builder.RegisterType<PersonRepo>();
             builder.RegisterType<ProjectAccessRepo>();
             builder.RegisterType<ProjectRepo>();
-            builder.RegisterType<SceneRepo>();
 
             //Services
             builder.RegisterType<ScriptService>();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SAR.Modules.Script.Objects;
 
 namespace SAR.Modules.Script.Importer.Objects
@@ -7,13 +8,13 @@ namespace SAR.Modules.Script.Importer.Objects
     {
         public ProjectBinder()
         {
-            SceneBinders = new List<SceneBinder>();
+            Elements = new List<ScriptElement>();
             Characters = new Dictionary<string, Character>();
         }
 
         public Project Project { get; set; }
 
-        public List<SceneBinder> SceneBinders { get; set; }
+        public List<ScriptElement> Elements { get; set; }
 
         public Dictionary<string, Character> Characters { get; set; }
     }

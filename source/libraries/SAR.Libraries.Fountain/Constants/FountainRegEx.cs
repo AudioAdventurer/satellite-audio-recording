@@ -16,8 +16,8 @@
         public const string PAGE_BREAK_PATTERN = @"(?<=\n)(\s*[\=\-_]{3,8}\s*)\n{1}";
         public const string CLEANUP_PATTERN = @"<Action>\s*<\/Action>";
         public const string FIRST_LINE_ACTION_PATTERN = @"^\n\n([^<>\n#]*?)\n";
-        public const string SCENE_NUMBER_PATTERN = @"(\#([0-9A-Za-z\.\)-]+)\#)";
-        public const string SECTION_HEADER_PATTERN = @"((#+)(\s*[^\n]*))\n?";
+        
+        public const string SECTION_HEADER_PATTERN = @"^((#+)(\s*[^\n<>]*))\n?";
 
         public const string BLOCK_COMMENT_PATTERN = @"\n\/\*([^<>]+?)\*\/\n";
         public const string BRACKET_COMMENT_PATTERN = @"\n\[{2}([^<>]+?)\]{2}\n";

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +7,6 @@ using SAR.Apps.Server.Helpers;
 using SAR.Apps.Server.Services;
 using SAR.Libraries.Common.Interfaces;
 using SAR.Modules.Script.Importer.Importers;
-using SAR.Modules.Script.Services;
 
 namespace SAR.Apps.Server.Controllers
 {
@@ -33,7 +30,7 @@ namespace SAR.Apps.Server.Controllers
 
         [HttpPost]
         [Route("api/projects/{projectId:Guid}/import/fountain")]
-        public ActionResult GetProject([FromRoute] Guid projectId, [FromForm] IFormFile file)
+        public ActionResult ImportScript([FromRoute] Guid projectId, [FromForm] IFormFile file)
         {
             Guid personId = User.GetPersonId();
 

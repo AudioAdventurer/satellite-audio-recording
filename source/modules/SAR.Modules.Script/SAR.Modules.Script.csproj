@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libraries\SAR.Libraries.Database\SAR.Libraries.Database.csproj" />
+    <ProjectReference Include="..\..\libraries\SAR.Libraries.Fountain\SAR.Libraries.Fountain.csproj" />
   </ItemGroup>
 
 </Project>

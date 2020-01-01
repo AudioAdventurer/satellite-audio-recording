@@ -26,6 +26,11 @@ namespace SAR.Libraries.Database.Repos
 
         public void Save(T record)
         {
+            if (record.Id.Equals(Guid.Empty))
+            {
+                throw new Exception("Empty guid attempted to be saved");
+            }
+
             var existing = GetById(record.Id);
 
             if (existing == null)

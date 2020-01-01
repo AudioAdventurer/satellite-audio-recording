@@ -9,6 +9,6 @@ namespace SAR.Modules.Script.Objects
 
         public Guid ProjectId { get; set; }
 
-        public Guid ActorPersonId { get; set; }
+        public Guid? ActorPersonId { get; set; }
     }
 }

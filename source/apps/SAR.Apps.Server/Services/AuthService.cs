@@ -47,7 +47,8 @@ namespace SAR.Apps.Server.Services
                         FamilyName = person.FamilyName,
                         GivenName = person.GivenName,
                         PersonId = person.Id,
-                        UserId = user.Id
+                        UserId = user.Id,
+                        UserType = user.UserType
                     };
 
                     return webSession;

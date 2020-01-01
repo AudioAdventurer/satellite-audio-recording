@@ -34,7 +34,7 @@ namespace SAR.Apps.Server.Controllers
         {
             Guid personId = User.GetPersonId();
 
-            if (_projectService.IsOwner(personId, projectId))
+            if (_projectService.IsProjectOwner(personId, projectId))
             {
                 var script = "";
 

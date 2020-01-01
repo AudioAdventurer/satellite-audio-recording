@@ -47,7 +47,7 @@ export default class Projects extends Component {
                 <Row>
                   <Col sm={3}><Link to={`${projectUrl}/characters`}>Characters</Link></Col>
                   <Col sm={3}><Link to={`${projectUrl}/scenes`}>Scenes</Link></Col>
-                  <Col sm={3}><Link to={`${projectUrl}/actors`}>Actors</Link></Col>
+                  <Col sm={3}><Link to={`${projectUrl}/participants`}>Participants</Link></Col>
                 </Row>
               </td>
               <td>{item.Description}</td>
@@ -74,7 +74,7 @@ export default class Projects extends Component {
       <div className="Projects">
         <Row>
           <Col>
-            <h2>Projects</h2>
+            <h3>Projects</h3>
           </Col>
           <Col>
             <div className="float-md-right">

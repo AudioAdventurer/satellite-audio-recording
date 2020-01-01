@@ -13,4 +13,8 @@
     <ProjectReference Include="..\SAR.Modules.Script\SAR.Modules.Script.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Objects\" />
+  </ItemGroup>
+
 </Project>

@@ -8,21 +8,21 @@ export default class Project extends Component {
   constructor(props) {
     super(props);
 
-    let id = this.props.match.params.id;
+    let projectId = this.props.match.params.projectId;
 
     this.state = {
-      id: id,
+      id: projectId,
       projectTitle: "",
       description: "",
       selectedFile:"",
       importingScript:false
     };
 
-    this.loadData(id);
+    this.loadData(projectId);
   }
 
-  loadData(id) {
-    SarService.getProject(id)
+  loadData(projectId) {
+    SarService.getProject(projectId)
       .then(r => {
         this.setState({
           projectTitle: r.Title || "",
@@ -104,7 +104,7 @@ export default class Project extends Component {
       <div className="Project">
         <Row>
           <Col>
-            <h2>Project</h2>
+            <h3>Project</h3>
           </Col>
           <Col>
           </Col>

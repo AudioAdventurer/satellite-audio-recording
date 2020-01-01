@@ -34,6 +34,11 @@ namespace SAR.Modules.Script.Services
             return _personRepo.GetById(personId);
         }
 
+        public IEnumerable<Person> GetPeople()
+        {
+            return _personRepo.GetAll();
+        }
+        
         public IEnumerable<Project> GetProjectsByPerson(Guid personId)
         {
             Dictionary<Guid, Project> projects = new Dictionary<Guid, Project>();
@@ -75,6 +80,11 @@ namespace SAR.Modules.Script.Services
             return _projectAccessRepo.Get(personId, projectId);
         }
 
+        public IEnumerable<ProjectAccess> GetProjectAccessByProject(Guid projectId)
+        {
+            return _projectAccessRepo.GetByProject(projectId);
+        }
+
         public void Save(Project project)
         {
             _projectRepo.Save(project);
@@ -103,6 +113,11 @@ namespace SAR.Modules.Script.Services
         public IEnumerable<Character> GetCharactersByProject(Guid projectId)
         {
             return _characterRepo.GetByProject(projectId);
+        }
+
+        public Character GetCharacter(Guid characterId)
+        {
+            return _characterRepo.GetById(characterId);
         }
 
         public void DeleteScriptElement(Guid elementId)

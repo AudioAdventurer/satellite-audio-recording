@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using SAR.Libraries.Fountain.Objects;
 using SAR.Modules.Script.Services;
 using SAR.Libraries.Fountain.Parser;
-using SAR.Modules.Script.Importer.Objects;
 using SAR.Modules.Script.Objects;
 
 namespace SAR.Modules.Script.Importer.Importers

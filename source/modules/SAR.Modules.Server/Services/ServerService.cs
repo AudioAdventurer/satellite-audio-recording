@@ -27,6 +27,12 @@ namespace SAR.Modules.Server.Services
             return user;
         }
 
+        public User GetUser(Guid userId)
+        {
+            var user = _userRepo.GetById(userId);
+            return user;
+        }
+
         public User GetUserByPerson(Guid personId)
         {
             var user = _userRepo.GetByPerson(personId);

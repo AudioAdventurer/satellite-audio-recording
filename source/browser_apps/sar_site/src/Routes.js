@@ -6,6 +6,9 @@ import UnauthenticatedRoute from "./Components/UnauthenticatedRoute";
 import Home from "./Containers/Home";
 import Login from "./Containers/Login";
 import Setup from "./Containers/Setup";
+import Character from "./Containers/Character";
+import Characters from "./Containers/Characters";
+import Participants from "./Containers/Participants";
 import Projects from "./Containers/Projects";
 import Project from "./Containers/Project";
 import NotFound from "./Containers/NotFound";
@@ -16,7 +19,10 @@ export default ({ childProps }) =>
     <UnauthenticatedRoute path="/login" exact component={Login} props={childProps} />
     <UnauthenticatedRoute path="/setup" exact component={Setup} props={childProps} />
     <AuthenticatedRoute path="/projects" exact component={Projects} props={childProps} />
-    <AuthenticatedRoute path="/projects/:id" exact component={Project} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId" exact component={Project} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId/characters/:characterId" exact component={Character} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId/characters" exact component={Characters} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId/participants" exact component={Participants} props={childProps} />
     { /* Finally, catch all unmatched routes */ }
     <Route component={NotFound} />
   </Switch>;

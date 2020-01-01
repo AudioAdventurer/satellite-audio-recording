@@ -3,9 +3,12 @@ import axios from 'axios';
 import AuthDao from "../Data/AuthDao";
 import SetupDao from "../Data/SetupDao";
 import ProjectDao from "../Data/ProjectDao";
+import PersonDao from "../Data/PersonDao";
+import CharacterDao from "../Data/CharacterDao";
 
 class SarService {
   static JWT = "";
+  static Session = null;
 
   //Projects
   static getProjects() {
@@ -26,6 +29,28 @@ class SarService {
   static importFountain(id, formData) {
     const dao = new ProjectDao(Environment.BASE_URL);
     return dao.importFountain(id, formData);
+  }
+
+  //Participants
+  static getParticipants(projectId) {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.getParticipants(projectId);
+  }
+
+  //Characters
+  static getCharactersWithActors(projectId) {
+    const dao = new CharacterDao(Environment.BASE_URL);
+    return dao.getCharactersWithActors(projectId);
+  }
+
+  static getCharacter(projectId, characterId) {
+    const dao = new CharacterDao(Environment.BASE_URL);
+    return dao.getCharacter(projectId, characterId);
+  }
+
+  static saveCharacter(character) {
+    const dao = new CharacterDao(Environment.BASE_URL);
+    return dao.saveCharacter(character);
   }
 
   //Authentication and setup
@@ -49,6 +74,10 @@ class SarService {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + SarService.JWT;
   }
 
+  static setSession(session) {
+    SarService.Session = session;
+  }
+
   static setCookie(cname, cvalue, exdays) {
     let d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -70,6 +99,11 @@ class SarService {
       }
     }
     return "";
+  }
+
+  static endSession() {
+    this.setSession(null);
+    this.setJwt("");
   }
 }
 

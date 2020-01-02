@@ -32,9 +32,19 @@ class SarService {
   }
 
   //Participants
-  static getParticipants(projectId) {
+  static getParticipantsWithAccess(projectId) {
     const dao = new PersonDao(Environment.BASE_URL);
-    return dao.getParticipants(projectId);
+    return dao.getParticipantsWithAccess(projectId);
+  }
+
+  static getParticipant(projectId, personId) {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.getParticipantWithAccess(projectId, personId);
+  }
+
+  static saveParticipant(person) {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.saveParticipant(person);
   }
 
   //Characters

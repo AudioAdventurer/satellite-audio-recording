@@ -27,7 +27,8 @@ namespace SAR.Apps.Server.Controllers
 
         [HttpGet]
         [Route("api/projects/{projectId:Guid}/people")]
-        public ActionResult<List<Person>> GetPeople([FromRoute] Guid projectId)
+        public ActionResult<List<Person>> GetPeople(
+            [FromRoute] Guid projectId)
         {
             var response = _projectService.GetPeople(
                 User.GetPersonId(),
@@ -36,10 +37,39 @@ namespace SAR.Apps.Server.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/people/{personId:Guid}")]
+        public ActionResult<Person> GetPerson(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid personId)
+        {
+            var response = _projectService.GetPerson(
+                User.GetPersonId(),
+                projectId,
+                personId);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/ui/people/{personId:Guid}")]
+        public ActionResult<PersonWithAccess> GetPersonWithAccess(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid personId)
+        {
+            var response = _projectService.GetPersonWithAccess(
+                User.GetPersonId(),
+                projectId,
+                personId);
+
+            return Ok(response);
+        }
+
 
         [HttpGet]
         [Route("api/projects/{projectId:Guid}/ui/people")]
-        public ActionResult<List<PersonWithAccess>> GetPeopleWithAccess([FromRoute] Guid projectId)
+        public ActionResult<List<PersonWithAccess>> GetPeopleWithAccess(
+            [FromRoute] Guid projectId)
         {
             var response = _projectService.GetPeopleWithAccess(
                 User.GetPersonId(),

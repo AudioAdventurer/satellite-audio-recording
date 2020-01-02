@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Table} from "react-bootstrap";
 import { FaPlusCircle } from "react-icons/fa";
+import { Link } from 'react-router-dom'
 
 export default class Participants extends Component {
   constructor(props) {
@@ -35,7 +36,7 @@ export default class Participants extends Component {
   }
 
   loadParticipants(projectId) {
-    SarService.getParticipants(projectId)
+    SarService.getParticipantsWithAccess(projectId)
       .then(r => {
         this.setState({
           participants: r
@@ -52,10 +53,16 @@ export default class Participants extends Component {
       let rows =  list.map((item, i) => {
 
         if (item.Id != null) {
+          let url = `/projects/${this.state.projectId}/participants/${item.Id}`;
+          let name = `${item.GivenName} ${item.FamilyName}`.trim();
+
           return (
             <tr key={item.Id}>
-              <td>{item.GivenName}</td>
-              <td>{item.FamilyName}</td>
+              <td>
+                <Link to={url}>
+                  {name}
+                </Link>
+                </td>
               <td>{item.Email}</td>
               <td>{item.PhoneNumber}</td>
               <td>{item.AccessTypes.join(', ')}</td>
@@ -96,8 +103,7 @@ export default class Participants extends Component {
             <Table striped bordered hover>
               <thead>
               <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Access</th>

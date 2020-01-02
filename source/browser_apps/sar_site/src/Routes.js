@@ -8,6 +8,7 @@ import Login from "./Containers/Login";
 import Setup from "./Containers/Setup";
 import Character from "./Containers/Character";
 import Characters from "./Containers/Characters";
+import Participant from "./Containers/Participant";
 import Participants from "./Containers/Participants";
 import Projects from "./Containers/Projects";
 import Project from "./Containers/Project";
@@ -23,6 +24,7 @@ export default ({ childProps }) =>
     <AuthenticatedRoute path="/projects/:projectId/characters/:characterId" exact component={Character} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/characters" exact component={Characters} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/participants" exact component={Participants} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId/participants/:participantId" exact component={Participant} props={childProps} />
     { /* Finally, catch all unmatched routes */ }
     <Route component={NotFound} />
   </Switch>;

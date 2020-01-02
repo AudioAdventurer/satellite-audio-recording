@@ -186,6 +186,50 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
+        public Person GetPerson(Guid userPersonId, Guid projectId, Guid personId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var temp = new Dictionary<Guid, Person>();
+
+                var accessRight = _scriptService.GetProjectAccess(personId, projectId);
+
+                if (accessRight != null)
+                {
+                    var person = _scriptService.GetPerson(personId);
+                    return person;
+                }
+
+                return null;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public PersonWithAccess GetPersonWithAccess(Guid userPersonId, Guid projectId, Guid personId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var temp = new Dictionary<Guid, Person>();
+
+                var accessRight = _scriptService.GetProjectAccess(personId, projectId);
+
+                if (accessRight != null)
+                {
+
+                    var person = _scriptService.GetPerson(personId);
+                    var pwa = new PersonWithAccess(person);
+                    pwa.AccessTypes.AddRange(accessRight.AccessTypes);
+
+                    return pwa;
+                }
+
+                return null;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
         public bool IsSystemOwner(Guid userId)
         {
             var user = _serverService.GetUser(userId);

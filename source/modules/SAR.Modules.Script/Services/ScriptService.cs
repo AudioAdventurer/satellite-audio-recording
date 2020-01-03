@@ -38,7 +38,7 @@ namespace SAR.Modules.Script.Services
         {
             return _personRepo.GetAll();
         }
-        
+
         public IEnumerable<Project> GetProjectsByPerson(Guid personId)
         {
             Dictionary<Guid, Project> projects = new Dictionary<Guid, Project>();
@@ -103,6 +103,16 @@ namespace SAR.Modules.Script.Services
         public void Save(ScriptElement element)
         {
             _scriptElementRepo.Save(element);
+        }
+
+        public ScriptElement GetScriptElement(Guid elementId)
+        {
+            return _scriptElementRepo.GetById(elementId);
+        }
+
+        public IEnumerable<ScriptElement> GetScriptElements(Guid projectId, int start, int end)
+        {
+            return _scriptElementRepo.GetByProject(projectId, start, end);
         }
 
         public void Save(Character character)

@@ -42,9 +42,9 @@ class SarService {
     return dao.getParticipantWithAccess(projectId, personId);
   }
 
-  static saveParticipant(person) {
+  static saveParticipantWithAccess(person) {
     const dao = new PersonDao(Environment.BASE_URL);
-    return dao.saveParticipant(person);
+    return dao.saveParticipantWithAccess(person);
   }
 
   //Characters

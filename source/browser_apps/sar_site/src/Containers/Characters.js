@@ -84,7 +84,6 @@ export default class Characters extends Component {
       <tbody></tbody>);
   }
 
-
   render() {
     return (
       <div className="Characters">
@@ -94,9 +93,9 @@ export default class Characters extends Component {
           </Col>
           <Col>
             <div className="float-md-right">
-              <span id="newProject" onClick={() => this.handleNewCharacter()}>
+              <Link to={`/projects/${this.state.projectId}/characters/new`}>
                 <FaPlusCircle/>
-              </span>
+              </Link>
             </div>
           </Col>
         </Row>

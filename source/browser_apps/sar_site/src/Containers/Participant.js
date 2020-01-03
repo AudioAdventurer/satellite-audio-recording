@@ -97,7 +97,7 @@ export default class Character extends Component {
         AccessTypes: accessTypes
       };
 
-      SarService.saveParticipant(person)
+      SarService.saveParticipantWithAccess(person)
         .then(r => {
           this.setState({
             redirect: true

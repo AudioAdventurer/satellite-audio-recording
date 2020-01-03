@@ -1,4 +1,5 @@
-﻿using SAR.Libraries.Fountain.Objects;
+﻿using System;
+using SAR.Libraries.Fountain.Objects;
 
 namespace SAR.Libraries.Fountain.Factories
 {
@@ -8,7 +9,12 @@ namespace SAR.Libraries.Fountain.Factories
             string fountainElementType,
             string fountainElementRawData)
         {
-            return null;
+            if (fountainElementType.Equals(typeof(SceneElement).FullName))
+            {
+                return new SceneElement(fountainElementRawData);
+            }
+
+            throw new NotSupportedException(fountainElementType);
         }
     }
 }

@@ -10,7 +10,7 @@ export default class PersonDao extends BaseDao {
     return this.read(`/projects/${projectId}/ui/people/${personId}`);
   }
 
-  saveParticipant(person) {
+  saveParticipantWithAccess(person) {
     return this.write(`/projects/${person.ProjectId}/ui/people`)
   }
 }

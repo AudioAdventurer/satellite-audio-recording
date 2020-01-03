@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using SAR.Apps.Server.Objects;
+using SAR.Libraries.Fountain.Objects;
 using SAR.Modules.Script.Constants;
+using SAR.Modules.Script.Helpers;
 using SAR.Modules.Script.Objects;
 using SAR.Modules.Script.Services;
 using SAR.Modules.Server.Constants;
@@ -285,6 +287,74 @@ namespace SAR.Apps.Server.Services
                 }
 
                 return temp.Values.ToList();
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<Scene> GetScenes(Guid userPersonId, Guid projectId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var project = _scriptService.GetProject(projectId);
+
+                var output = new List<Scene>();
+
+                int i = 0;
+
+                foreach (var sceneId in project.Scenes)
+                {
+                    var scriptElement = _scriptService.GetScriptElement(sceneId);
+                    var fs = (SceneElement) scriptElement.ToFountain();
+
+                    Scene s = new Scene
+                    {
+                        Id = sceneId,
+                        InteriorExterior = fs.InteriorExterior,
+                        Location = fs.Location,
+                        SceneNumber = fs.SceneNumber,
+                        TimeOfDay = fs.TimeOfDay,
+                        SequenceNumber = i,
+                        ScriptPosition = scriptElement.SequenceNumber
+                    };
+
+                    output.Add(s);
+
+                    i++;
+                }
+
+                return output;
+
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<ScriptLine> GetScript(Guid userPersonId, Guid projectId, int start, int end)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var elements =  _scriptService.GetScriptElements(projectId, start, end);
+
+                var output = new List<ScriptLine>();
+
+                foreach (var se in elements)
+                {
+                    var parts = se.FountainElementType.Split(".".ToCharArray());
+                    var type = parts[parts.Length - 1].Replace("Element", "");
+
+                    var sl = new ScriptLine
+                    {
+                        ProjectId = se.ProjectId,
+                        Line = se.FountainRawData,
+                        SequenceNumber = se.SequenceNumber,
+                        LineType = type
+                    };
+
+                    output.Add(sl);
+                }
+
+                return output;
             }
 
             throw new UnauthorizedAccessException();

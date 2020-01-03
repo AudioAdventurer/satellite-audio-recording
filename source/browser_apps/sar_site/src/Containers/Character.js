@@ -24,6 +24,10 @@ export default class Character extends Component {
       participants:[]
     };
 
+    this.loadProject = this.loadProject.bind(this);
+    this.loadCharacter = this.loadCharacter.bind(this);
+    this.loadParticipants = this.loadParticipants.bind(this);
+
     this.loadProject(projectId);;
 
     if (characterId !== 'new'){
@@ -34,7 +38,7 @@ export default class Character extends Component {
   }
 
   loadParticipants(projectId) {
-    SarService.getParticipants(projectId)
+    SarService.getParticipantsWithAccess(projectId)
       .then(r => {
         this.setState({
           participants: r

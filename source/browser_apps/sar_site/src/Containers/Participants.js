@@ -18,6 +18,9 @@ export default class Participants extends Component {
       participants:[]
     };
 
+    this.loadParticipants = this.loadParticipants.bind(this);
+    this.loadProject = this.loadProject.bind(this);
+
     this.loadProject(projectId);
     this.loadParticipants(projectId);
   }
@@ -45,6 +48,10 @@ export default class Participants extends Component {
       .catch(e => {
         alert(e.message);
       });
+  }
+
+  handleNewPerson() {
+
   }
 
   renderTableBody(list) {
@@ -92,9 +99,9 @@ export default class Participants extends Component {
           </Col>
           <Col>
             <div className="float-md-right">
-              <span id="newProject" onClick={() => this.handleNewPerson()}>
+              <Link to={`/projects/${this.state.projectId}/participants/new`}>
                 <FaPlusCircle/>
-              </span>
+              </Link>
             </div>
           </Col>
         </Row>

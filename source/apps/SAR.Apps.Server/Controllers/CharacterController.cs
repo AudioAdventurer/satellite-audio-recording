@@ -25,7 +25,6 @@ namespace SAR.Apps.Server.Controllers
             _logger = logger;
         }
 
-
         [HttpGet]
         [Route("api/projects/{projectId:Guid}/characters")]
         public ActionResult<List<Character>> GetCharacters(

@@ -117,7 +117,7 @@ export default class Character extends Component {
                     multiple
                     value={this.state.accessTypes}
                     onChange={this.handleChange}>
-        <option value="actor">Actor</option>
+        <option value="performer">Performer</option>
         <option value="audio">Audio Engineer</option>
         <option value="director">Director</option>
         <option value="producer">Producer</option>
@@ -180,7 +180,7 @@ export default class Character extends Component {
                 />
               </Form.Group>
               <Form.Group controlId="accessTypes">
-                <Form.Label>Actor</Form.Label>
+                <Form.Label>Project Access</Form.Label>
                 {this.renderSelect(this.state.accessTypes)}
               </Form.Group>
               <Button variant="primary" type="submit">

@@ -24,6 +24,12 @@ namespace SAR.Modules.Script.Importer.Importers
             var project = _scriptService.GetProject(projectId);
             var characters = new Dictionary<string, Character>();
             var scriptElements = new List<ScriptElement>();
+            var characterDialogs = new List<CharacterDialog>();
+            var scenes = new List<Scene>();
+
+            Character lastCharacter = null;
+            Scene currentScene = null;
+            int sceneNumber = 1;
 
             int sequenceNumber = 0;
             foreach (var element in elements)
@@ -49,9 +55,15 @@ namespace SAR.Modules.Script.Importer.Importers
                     //Handle some special types
                     if (element is CharacterElement ce)
                     {
-                        if (!characters.ContainsKey(ce.Name))
+                        Character c;
+
+                        if (characters.ContainsKey(ce.Name))
                         {
-                            Character c = new Character
+                            c = characters[ce.Name];
+                        }
+                        else
+                        {
+                            c = new Character
                             {
                                 Name = ce.Name,
                                 ProjectId = projectId
@@ -59,10 +71,44 @@ namespace SAR.Modules.Script.Importer.Importers
 
                             characters.Add(ce.Name, c);
                         }
+
+                        lastCharacter = c;
                     }
                     else if (element is SceneElement se)
                     {
-                        project.Scenes.Add(scriptElement.Id);
+                        Scene s = new Scene
+                        {
+                            ProjectId = projectId,
+                            Number = sceneNumber,
+                            ScriptElementId = scriptElement.Id,
+                            ScriptSequenceNumber = scriptElement.SequenceNumber
+                        };
+
+                        scenes.Add(s);
+
+                        currentScene = s;
+
+                        sceneNumber++;
+                    }
+                    else if (element is DialogueElement de)
+                    {
+                        if (lastCharacter != null)
+                        {
+                            CharacterDialog cd = new CharacterDialog
+                            {
+                                CharacterId = lastCharacter.Id,
+                                ProjectId = projectId,
+                                ScriptElementId = scriptElement.Id,
+                                ScriptSequenceNumber = scriptElement.SequenceNumber
+                            };
+
+                            if (currentScene != null)
+                            {
+                                cd.SceneId = currentScene.Id;
+                            }
+
+                            characterDialogs.Add(cd);
+                        }
                     }
                 }
             }
@@ -82,6 +128,16 @@ namespace SAR.Modules.Script.Importer.Importers
             foreach (var scriptElement in scriptElements)
             {
                 _scriptService.Save(scriptElement);
+            }
+
+            foreach (var scene in scenes)
+            {
+                _scriptService.Save(scene);
+            }
+
+            foreach (var characterDialog in characterDialogs)
+            {
+                _scriptService.Save(characterDialog);
             }
         }
 

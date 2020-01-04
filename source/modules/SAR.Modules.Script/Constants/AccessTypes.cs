@@ -2,7 +2,7 @@
 {
     public static class AccessTypes
     {
-        public const string Actor = "actor";
+        public const string Performer = "performer";
         public const string AudioEngineer = "audio";
         public const string Director = "director";
         public const string Editor = "editor";

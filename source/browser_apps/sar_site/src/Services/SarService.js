@@ -48,9 +48,9 @@ class SarService {
   }
 
   //Characters
-  static getCharactersWithActors(projectId) {
+  static getCharactersWithPerformer(projectId) {
     const dao = new CharacterDao(Environment.BASE_URL);
-    return dao.getCharactersWithActors(projectId);
+    return dao.getCharactersWithPerformer(projectId);
   }
 
   static getCharacter(projectId, characterId) {

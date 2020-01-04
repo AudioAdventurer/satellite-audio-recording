@@ -2,7 +2,7 @@ import BaseDao from "./BaseDao.js"
 
 export default class PersonDao extends BaseDao {
 
-  getCharactersWithActors(projectId) {
+  getCharactersWithPerformer(projectId) {
     return this.read(`/projects/${projectId}/ui/characters`);
   }
 

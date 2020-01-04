@@ -9,24 +9,30 @@ namespace SAR.Modules.Script.Services
 {
     public class ScriptService
     {
+        private readonly CharacterDialogRepo _characterDialogRepo;
         private readonly CharacterRepo _characterRepo;
-        private readonly ScriptElementRepo _scriptElementRepo;
         private readonly PersonRepo _personRepo;
         private readonly ProjectAccessRepo _projectAccessRepo;
         private readonly ProjectRepo _projectRepo;
+        private readonly SceneRepo _sceneRepo;
+        private readonly ScriptElementRepo _scriptElementRepo;
 
         public ScriptService(
             CharacterRepo characterRepo,
+            CharacterDialogRepo characterDialogRepo,
+            SceneRepo sceneRepo,
             ScriptElementRepo scriptElementRepo,
             PersonRepo personRepo,
             ProjectAccessRepo projectAccessRepo,
             ProjectRepo projectRepo)
         {
             _characterRepo = characterRepo;
-            _scriptElementRepo = scriptElementRepo;
+            _characterDialogRepo = characterDialogRepo;
             _personRepo = personRepo;
             _projectAccessRepo = projectAccessRepo;
             _projectRepo = projectRepo;
+            _sceneRepo = sceneRepo;
+            _scriptElementRepo = scriptElementRepo;
         }
 
         public Person GetPerson(Guid personId)
@@ -165,13 +171,49 @@ namespace SAR.Modules.Script.Services
             _scriptElementRepo.DeleteByProject(projectId);
         }
 
+        public void DeleteCharacterDialogByProject(Guid projectId)
+        {
+            _characterDialogRepo.DeleteByProject(projectId);
+        }
+
+        public void DeleteScenesByProject(Guid projectId)
+        {
+            _sceneRepo.DeleteByProject(projectId);
+        }
+
         public void DeleteProjectScript(Guid projectId)
         {
             //Delete Elements for the scene
             DeleteScriptElementsByProject(projectId);
 
+            //Delete All Character Dialog Links for project
+            DeleteCharacterDialogByProject(projectId);
+
             //Delete All Characters
             DeleteCharactersByProject(projectId);
+
+            //Delete All Scenes
+            DeleteScenesByProject(projectId);
+        }
+
+        public void Save(CharacterDialog characterDialog)
+        {
+            _characterDialogRepo.Save(characterDialog);
+        }
+
+        public IEnumerable<CharacterDialog> GetCharacterDialogsByCharacter(Guid characterId)
+        {
+            return _characterDialogRepo.GetByCharacter(characterId);
+        }
+
+        public void Save(Scene scene)
+        {
+            _sceneRepo.Save(scene);
+        }
+
+        public IEnumerable<Scene> GetScenesByProject(Guid projectId)
+        {
+            return _sceneRepo.GetByProject(projectId);
         }
     }
 }

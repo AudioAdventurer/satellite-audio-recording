@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SAR.Libraries.Database.Objects;
 
 namespace SAR.Modules.Script.Objects
@@ -9,7 +8,6 @@ namespace SAR.Modules.Script.Objects
         public Project()
         {
             ScriptProperties = new Dictionary<string, string>();
-            Scenes = new List<Guid>();
         }
 
         public string Title { get; set; }
@@ -17,7 +15,5 @@ namespace SAR.Modules.Script.Objects
 
         public string ScriptTitle { get; set; }
         public Dictionary<string, string> ScriptProperties { get; set; }
-
-        public List<Guid> Scenes { get; set; }
     }
 }

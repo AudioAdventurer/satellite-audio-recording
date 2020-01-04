@@ -141,20 +141,20 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
-        public IEnumerable<CharacterWithActor> GetCharactersWithActors(Guid userPersonId, Guid projectId)
+        public IEnumerable<CharacterWithPerformer> GetCharactersWithPerformer(Guid userPersonId, Guid projectId)
         {
             if (HasAccessToProject(userPersonId, projectId))
             {
-                var output = new List<CharacterWithActor>();
+                var output = new List<CharacterWithPerformer>();
 
                 var characters = _scriptService.GetCharactersByProject(projectId);
                 foreach (var character in characters)
                 {
-                    var cwa = new CharacterWithActor(character);
+                    var cwa = new CharacterWithPerformer(character);
 
-                    if (character.ActorPersonId != null)
+                    if (character.PerformerPersonId != null)
                     {
-                        cwa.Actor = _scriptService.GetPerson(character.ActorPersonId.Value);
+                        cwa.Performer = _scriptService.GetPerson(character.PerformerPersonId.Value);
                     }
 
                     output.Add(cwa);
@@ -292,39 +292,33 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
-        public IEnumerable<Scene> GetScenes(Guid userPersonId, Guid projectId)
+        public IEnumerable<Objects.Scene> GetScenes(Guid userPersonId, Guid projectId)
         {
             if (HasAccessToProject(userPersonId, projectId))
             {
-                var project = _scriptService.GetProject(projectId);
+                var scenes = _scriptService.GetScenesByProject(projectId);
+                var output = new List<Objects.Scene>();
 
-                var output = new List<Scene>();
-
-                int i = 0;
-
-                foreach (var sceneId in project.Scenes)
+                foreach (var scene in scenes)
                 {
-                    var scriptElement = _scriptService.GetScriptElement(sceneId);
+                    var scriptElement = _scriptService.GetScriptElement(scene.ScriptElementId);
                     var fs = (SceneElement) scriptElement.ToFountain();
 
-                    Scene s = new Scene
+                    Objects.Scene s = new Objects.Scene
                     {
-                        Id = sceneId,
+                        Id = scene.Id,
                         InteriorExterior = fs.InteriorExterior,
                         Location = fs.Location,
                         SceneNumber = fs.SceneNumber,
                         TimeOfDay = fs.TimeOfDay,
-                        SequenceNumber = i,
+                        SequenceNumber = scene.Number,
                         ScriptPosition = scriptElement.SequenceNumber
                     };
 
                     output.Add(s);
-
-                    i++;
                 }
 
                 return output;
-
             }
 
             throw new UnauthorizedAccessException();

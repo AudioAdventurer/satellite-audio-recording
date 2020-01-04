@@ -17,7 +17,7 @@ export default class Character extends Component {
       projectId:projectId,
       characterId: characterId,
       characterName: "",
-      actorPersonId: "",
+      performerPersonId: "",
       projectTitle:"",
       project:{},
       character:{},
@@ -65,15 +65,15 @@ export default class Character extends Component {
   loadCharacter(projectId, characterId) {
     SarService.getCharacter(projectId, characterId)
       .then(r => {
-        let actorPersonId = r.ActorPersonId;
-        if (actorPersonId === null){
-          actorPersonId = "";
+        let performerPersonId = r.PerformerPersonId;
+        if (performerPersonId === null){
+          performerPersonId = "";
         }
 
         this.setState({
           character: r,
           characterName: r.Name,
-          actorPersonId: actorPersonId
+          performerPersonId: performerPersonId
         });
       })
       .catch(e => {
@@ -103,9 +103,9 @@ export default class Character extends Component {
         characterId = uuid.v4();
       }
 
-      let actorPersonId = this.state.actorPersonId;
-      if (actorPersonId === ""){
-        actorPersonId = null;
+      let performerPersonId = this.state.performerPersonId;
+      if (performerPersonId === ""){
+        performerPersonId = null;
       }
       let characterName = this.state.characterName;
 
@@ -113,7 +113,7 @@ export default class Character extends Component {
         Id: characterId,
         ProjectId: projectId,
         Name: characterName,
-        ActorPersonId: actorPersonId
+        performerPersonId: performerPersonId
       }
 
       SarService.saveCharacter(character)
@@ -146,14 +146,14 @@ export default class Character extends Component {
       });
 
       return(
-        <Form.Control as="select" value={this.state.actorPersonId} onChange={this.handleChange}>
+        <Form.Control as="select" value={this.state.performerPersonId} onChange={this.handleChange}>
           <option value="">None</option>
           {rows}
         </Form.Control>);
     }
 
     return(
-      <Form.Control as="select" value={this.state.actorPersonId} onChange={this.handleChange}>
+      <Form.Control as="select" value={this.state.performerPersonId} onChange={this.handleChange}>
         <option value="">None</option>
       </Form.Control>);
   }
@@ -184,8 +184,8 @@ export default class Character extends Component {
                   onChange={this.handleChange}
                 />
               </Form.Group>
-              <Form.Group controlId="actorPersonId">
-                <Form.Label>Actor</Form.Label>
+              <Form.Group controlId="performerPersonId">
+                <Form.Label>Performer</Form.Label>
                 {this.renderSelect(this.state.participants)}
               </Form.Group>
               <Button variant="primary" type="submit">

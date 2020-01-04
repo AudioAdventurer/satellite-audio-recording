@@ -36,7 +36,7 @@ export default class Characters extends Component {
   }
 
   loadCharacters(projectId) {
-    SarService.getCharactersWithActors(projectId)
+    SarService.getCharactersWithPerformer(projectId)
       .then(r => {
         this.setState({
           characters: r
@@ -54,19 +54,19 @@ export default class Characters extends Component {
 
         if (item.Id != null) {
           let url = `/projects/${this.state.projectId}/characters/${item.Id}`
-          let actorGivenName = "";
-          let actorFamilyName = "";
+          let performerGivenName = "";
+          let performerFamilyName = "";
 
-          if (item.Actor !== null) {
-            actorGivenName = item.Actor.GivenName;
-            actorFamilyName = item.Actor.FamilyName;
+          if (item.Performer !== null) {
+            performerGivenName = item.Performer.GivenName;
+            performerFamilyName = item.Performer.FamilyName;
           }
 
           return (
             <tr key={item.Id}>
               <td><Link to={url}>{item.Name}</Link></td>
-              <td>{actorGivenName}</td>
-              <td>{actorFamilyName}</td>
+              <td>{performerGivenName}</td>
+              <td>{performerFamilyName}</td>
             </tr>
           );
         } else {
@@ -105,8 +105,8 @@ export default class Characters extends Component {
               <thead>
               <tr>
                 <th>Name</th>
-                <th>Actor First Name</th>
-                <th>Actor Last Name</th>
+                <th>Performer First Name</th>
+                <th>Performer Last Name</th>
               </tr>
               </thead>
               { this.renderTableBody(this.state.characters) }

@@ -53,10 +53,10 @@ namespace SAR.Apps.Server.Controllers
 
         [HttpGet]
         [Route("api/projects/{projectId:Guid}/ui/characters")]
-        public ActionResult<List<CharacterWithActor>> GetCharactersWithActors(
+        public ActionResult<List<CharacterWithPerformer>> GetCharactersWithPerformer(
             [FromRoute] Guid projectId)
         {
-            var response = _projectService.GetCharactersWithActors(
+            var response = _projectService.GetCharactersWithPerformer(
                 User.GetPersonId(),
                 projectId);
 

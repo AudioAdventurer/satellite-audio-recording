@@ -29,7 +29,7 @@ export default class Home extends Component {
       return (
         <div className="lander">
           <h1>Satellite Audio Recorder</h1>
-          <p>This is a tool designed to assist with creating Audio Drama when actors are primarily in remote locations.
+          <p>This is a tool designed to assist with creating Audio Drama when performers are primarily in remote locations.
           </p>
         </div>
       );

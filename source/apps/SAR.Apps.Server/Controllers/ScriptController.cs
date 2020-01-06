@@ -41,5 +41,87 @@ namespace SAR.Apps.Server.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/script/{characterId:Guid}/next/{currentScriptSequenceNumber:int}")]
+        public ActionResult<ScriptLine> GetNextScriptLineByCharacter(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid characterId,
+            [FromRoute] int currentScriptSequenceNumber)
+        {
+            var response = _projectService.GetNextScriptLineByCharacter(
+                User.GetPersonId(), 
+                projectId, 
+                characterId,
+                currentScriptSequenceNumber);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/script/{characterId:Guid}/previous/{currentScriptSequenceNumber:int}")]
+        public ActionResult<ScriptLine> GetPreviousScriptLineByCharacter(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid characterId,
+            [FromRoute] int currentScriptSequenceNumber)
+        {
+            var response = _projectService.GetPreviousScriptLineByCharacter(
+                User.GetPersonId(),
+                projectId,
+                characterId,
+                currentScriptSequenceNumber);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/script/{characterId:Guid}/next/{currentScriptSequenceNumber:int}/limit/{limit:int}")]
+        public ActionResult<IEnumerable<ScriptLine>> GetNextScriptLinesByCharacter(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid characterId,
+            [FromRoute] int currentScriptSequenceNumber,
+            [FromRoute] int limit)
+        {
+            var response = _projectService.GetNextScriptLinesByCharacter(
+                User.GetPersonId(),
+                projectId,
+                characterId,
+                currentScriptSequenceNumber,
+                limit);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/script/{characterId:Guid}/previous/{currentScriptSequenceNumber:int}/limit/{limit:int}")]
+        public ActionResult<IEnumerable<ScriptLine>> GetPreviousScriptLinesByCharacter(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid characterId,
+            [FromRoute] int currentScriptSequenceNumber,
+            [FromRoute] int limit)
+        {
+            var response = _projectService.GetPreviousScriptLinesByCharacter(
+                User.GetPersonId(),
+                projectId,
+                characterId,
+                currentScriptSequenceNumber,
+                limit);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/script/{characterDialogId:Guid}/context")]
+        public ActionResult<IEnumerable<ScriptLine>> GetScriptLineContext(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid characterDialogId)
+        {
+            var response = _projectService.GetScriptLineContext(
+                User.GetPersonId(),
+                projectId,
+                characterDialogId);
+
+            return Ok(response);
+        }
     }
 }

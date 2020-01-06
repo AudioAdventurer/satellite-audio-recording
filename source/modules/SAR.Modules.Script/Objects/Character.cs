@@ -10,5 +10,9 @@ namespace SAR.Modules.Script.Objects
         public Guid ProjectId { get; set; }
 
         public Guid? PerformerPersonId { get; set; }
+
+        public int FirstDialogSequenceNumber { get; set; }
+
+        public int LastDialogSequenceNumber { get; set; }
     }
 }

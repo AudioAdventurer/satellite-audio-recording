@@ -120,11 +120,14 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
+        
+
         public Character GetCharacter(Guid userPersonId, Guid projectId, Guid characterId)
         {
             if (HasAccessToProject(userPersonId, projectId))
             {
-                return _scriptService.GetCharacter(characterId);
+                var character = _scriptService.GetCharacter(characterId);
+                return character;
             }
 
             throw new UnauthorizedAccessException();
@@ -141,26 +144,44 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
-        public IEnumerable<CharacterWithPerformer> GetCharactersWithPerformer(Guid userPersonId, Guid projectId)
+        public UICharacter BuildUICharacter(Character character)
+        {
+            var uic = new UICharacter(character);
+
+            if (character.PerformerPersonId != null)
+            {
+                uic.Performer = _scriptService.GetPerson(character.PerformerPersonId.Value);
+            }
+
+            return uic;
+        }
+
+        public IEnumerable<UICharacter> GetUICharacters(Guid userPersonId, Guid projectId)
         {
             if (HasAccessToProject(userPersonId, projectId))
             {
-                var output = new List<CharacterWithPerformer>();
+                var output = new List<UICharacter>();
 
                 var characters = _scriptService.GetCharactersByProject(projectId);
                 foreach (var character in characters)
                 {
-                    var cwa = new CharacterWithPerformer(character);
-
-                    if (character.PerformerPersonId != null)
-                    {
-                        cwa.Performer = _scriptService.GetPerson(character.PerformerPersonId.Value);
-                    }
-
-                    output.Add(cwa);
+                    output.Add(BuildUICharacter(character));
                 }
 
                 return output;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public UICharacter GetUICharacter(Guid userPersonId, Guid projectId, Guid characterId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var output = new List<UICharacter>();
+
+                var character = _scriptService.GetCharacter(characterId);
+                return BuildUICharacter(character);
             }
 
             throw new UnauthorizedAccessException();
@@ -292,29 +313,52 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
-        public IEnumerable<Objects.Scene> GetScenes(Guid userPersonId, Guid projectId)
+        private UIScene BuildScene(SAR.Modules.Script.Objects.Scene scene)
+        {
+            if (scene == null)
+            {
+                return null;
+            }
+
+            var scriptElement = _scriptService.GetScriptElement(scene.ScriptElementId);
+            var fs = (SceneElement)scriptElement.ToFountain();
+
+            UIScene s = new UIScene
+            {
+                Id = scene.Id,
+                InteriorExterior = fs.InteriorExterior,
+                Location = fs.Location,
+                SceneNumber = fs.SceneNumber,
+                TimeOfDay = fs.TimeOfDay,
+                SequenceNumber = scene.Number,
+                ScriptPosition = scriptElement.SequenceNumber
+            };
+
+            return s;
+        }
+
+        public UIScene GetScene(Guid userPersonId, Guid projectId, Guid sceneId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var scene = _scriptService.GetScene(sceneId);
+                var s = BuildScene(scene);
+                return s;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<UIScene> GetScenes(Guid userPersonId, Guid projectId)
         {
             if (HasAccessToProject(userPersonId, projectId))
             {
                 var scenes = _scriptService.GetScenesByProject(projectId);
-                var output = new List<Objects.Scene>();
+                var output = new List<Objects.UIScene>();
 
                 foreach (var scene in scenes)
                 {
-                    var scriptElement = _scriptService.GetScriptElement(scene.ScriptElementId);
-                    var fs = (SceneElement) scriptElement.ToFountain();
-
-                    Objects.Scene s = new Objects.Scene
-                    {
-                        Id = scene.Id,
-                        InteriorExterior = fs.InteriorExterior,
-                        Location = fs.Location,
-                        SceneNumber = fs.SceneNumber,
-                        TimeOfDay = fs.TimeOfDay,
-                        SequenceNumber = scene.Number,
-                        ScriptPosition = scriptElement.SequenceNumber
-                    };
-
+                    UIScene s = BuildScene(scene);
                     output.Add(s);
                 }
 
@@ -334,6 +378,36 @@ namespace SAR.Apps.Server.Services
 
                 foreach (var se in elements)
                 {
+                    output.Add(BuildScriptLine(se));
+                }
+
+                return output;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public CharacterDialog GetCharacterDialog(Guid userPersonId, Guid projectId, Guid characterDialogId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                return _scriptService.GetCharacterDialog(characterDialogId);
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<ScriptLine> GetScriptLinesByCharacter(Guid userPersonId, Guid projectId, Guid characterId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var elements = _scriptService.GetCharacterDialogsByCharacter(characterId);
+
+                var output = new List<ScriptLine>();
+
+                foreach (var cdc in elements)
+                {
+                    var se = _scriptService.GetScriptElement(cdc.ScriptElementId);
                     var parts = se.FountainElementType.Split(".".ToCharArray());
                     var type = parts[parts.Length - 1].Replace("Element", "");
 
@@ -349,6 +423,257 @@ namespace SAR.Apps.Server.Services
                 }
 
                 return output;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public ScriptLine GetNextScriptLineByCharacter(
+            Guid userPersonId, 
+            Guid projectId, 
+            Guid characterId,
+            int currentScriptSequenceNumber)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var characterDialog = _scriptService.GetNextCharacterDialogByCharacter(characterId, currentScriptSequenceNumber);
+
+                var sl = BuildScriptLine(characterDialog);
+                return sl;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<ScriptLine> GetNextScriptLinesByCharacter(
+            Guid userPersonId,
+            Guid projectId,
+            Guid characterId,
+            int currentScriptSequenceNumber,
+            int limit)
+        {
+            Dictionary<Guid, UIScene> scenes = new Dictionary<Guid, UIScene>();
+
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var output = new List<ScriptLine>();
+                var characterDialogs = _scriptService.GetNextCharacterDialogsByCharacter(characterId, currentScriptSequenceNumber, limit);
+
+                foreach (var characterDialog in characterDialogs)
+                {
+                    var sl = BuildScriptLine(characterDialog, scenes);
+                    output.Add(sl);
+                }
+
+                return output;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public ScriptLine GetPreviousScriptLineByCharacter(
+            Guid userPersonId, 
+            Guid projectId, 
+            Guid characterId, 
+            int currentScriptSequenceNumber)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var characterDialog = _scriptService.GetPreviousCharacterDialogByCharacter(characterId, currentScriptSequenceNumber);
+
+                var sl = BuildScriptLine(characterDialog);
+                return sl;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        private ScriptLine BuildScriptLine(
+            CharacterDialog characterDialog,
+            Dictionary<Guid, UIScene> scenes = null,
+            ScriptElement scriptElement = null)
+        {
+            UIScene scene = null;
+
+            if (characterDialog.SceneId.HasValue)
+            {
+                Guid sceneId = characterDialog.SceneId.Value;
+
+                if (scenes != null)
+                {
+                    if (scenes.ContainsKey(sceneId))
+                    {
+                        scene = scenes[sceneId];
+                    }
+                    else
+                    {
+                        scene = BuildScene(_scriptService.GetScene(sceneId));
+                        scenes.Add(sceneId, scene);
+                    }
+                }
+                else
+                {
+                    scene = BuildScene(_scriptService.GetScene(sceneId));
+                }
+            }
+
+            var se = scriptElement;
+            if (se == null)
+            {
+                se = _scriptService.GetScriptElement(characterDialog.ScriptElementId);
+            }
+                
+            var parts = se.FountainElementType.Split(".".ToCharArray());
+            var type = parts[parts.Length - 1].Replace("Element", "");
+
+            var sl = new ScriptLine
+            {
+                CharacterDialogId = characterDialog.Id,
+                ProjectId = se.ProjectId,
+                Line = se.FountainRawData,
+                SequenceNumber = se.SequenceNumber,
+                LineType = type,
+                RecordingCount = characterDialog.RecordingCount
+            };
+
+            if (scene != null)
+            {
+                sl.SceneId = scene.Id;
+
+                if (scene.SceneNumber != null)
+                {
+                    sl.SceneNumber = scene.SceneNumber;
+                }
+                else
+                {
+                    sl.SceneNumber = Convert.ToString(scene.SequenceNumber);
+                }
+            }
+
+            return sl;
+        }
+
+        private ScriptLine BuildScriptLine(
+            ScriptElement scriptElement,
+            Dictionary<Guid, UIScene> scenes = null)
+        {
+            var parts = scriptElement.FountainElementType.Split(".".ToCharArray());
+            var type = parts[parts.Length - 1].Replace("Element", "");
+
+            var sl = new ScriptLine
+            {
+                CharacterDialogId = null,
+                ProjectId = scriptElement.ProjectId,
+                Line = scriptElement.FountainRawData,
+                SequenceNumber = scriptElement.SequenceNumber,
+                LineType = type,
+                RecordingCount = 0
+            };
+
+            return sl;
+        }
+
+        public IEnumerable<ScriptLine> GetPreviousScriptLinesByCharacter(
+            Guid userPersonId,
+            Guid projectId,
+            Guid characterId,
+            int currentScriptSequenceNumber,
+            int limit)
+        {
+            Dictionary<Guid, UIScene> scenes = new Dictionary<Guid, UIScene>();
+
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var output = new List<ScriptLine>();
+                var characterDialogs = _scriptService.GetPreviousCharacterDialogsByCharacter(characterId, currentScriptSequenceNumber, limit);
+
+                foreach (var characterDialog in characterDialogs)
+                {
+                    var sl = BuildScriptLine(characterDialog, scenes);
+                    output.Add(sl);
+                }
+
+                return output.OrderBy(sl => sl.SequenceNumber);
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<ScriptLine> GetScriptLineContext(
+            Guid userPersonId,
+            Guid projectId,
+            Guid characterDialogId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                Guid sceneId = Guid.Empty;
+                var focusCD = _scriptService.GetCharacterDialog(characterDialogId);
+                if (focusCD.SceneId.HasValue)
+                {
+                    sceneId = focusCD.SceneId.Value;
+                }
+
+                var previousCDs = _scriptService.GetPreviousCharacterDialogsByCharacter(
+                        focusCD.CharacterId,
+                        focusCD.ScriptSequenceNumber,
+                        2)
+                    .Where(cd => cd.SceneId == sceneId)
+                    .OrderBy(cd => cd.ScriptSequenceNumber)
+                    .ToList();
+
+                var postCDs = _scriptService.GetNextCharacterDialogsByCharacter(
+                        focusCD.CharacterId,
+                        focusCD.ScriptSequenceNumber,
+                        2)
+                    .Where(cd => cd.SceneId == sceneId)
+                    .OrderBy(cd => cd.ScriptSequenceNumber)
+                    .ToList();
+
+                var scene = _scriptService.GetScene(sceneId);
+                
+                int start = 0;
+
+                //Start 2 dialog lines previous
+                if (previousCDs.Count == 2)
+                {
+                    start = previousCDs[0].ScriptSequenceNumber - 1;
+                }
+                else
+                {
+                    //If there aren't 2 dialog lines
+                    //Start at the beginning of the scene
+                    if (scene != null)
+                    {
+                        start = scene.ScriptSequenceNumber;
+                    }
+                }
+
+                int end = focusCD.ScriptSequenceNumber;
+
+                //End with up to two following dialog lines
+                //otherwise just end with the focus line
+                if (postCDs.Any())
+                {
+                    end = postCDs[postCDs.Count - 1].ScriptSequenceNumber;
+                }
+                
+                var elements = _scriptService.GetScriptElements(projectId, start, end);
+
+                var output = new List<ScriptLine>();
+
+                foreach (var se in elements)
+                {
+                    if (se.Id.Equals(focusCD.ScriptElementId))
+                    {
+                        output.Add(BuildScriptLine(focusCD, null, se));
+                    }
+                    else
+                    {
+                        output.Add(BuildScriptLine(se));
+                    }
+                }
+
+                return output.OrderBy(sl => sl.SequenceNumber);
             }
 
             throw new UnauthorizedAccessException();

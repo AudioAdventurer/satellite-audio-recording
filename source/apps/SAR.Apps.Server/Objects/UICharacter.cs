@@ -2,18 +2,20 @@
 
 namespace SAR.Apps.Server.Objects
 {
-    public class CharacterWithPerformer : Character
+    public class UICharacter : Character
     {
-        public CharacterWithPerformer()
+        public UICharacter()
         {
         }
 
-        public CharacterWithPerformer(Character c)
+        public UICharacter(Character c)
         {
             this.Id = c.Id;
             this.ProjectId = c.ProjectId;
             this.Name = c.Name;
             this.PerformerPersonId = c.PerformerPersonId;
+            this.FirstDialogSequenceNumber = c.FirstDialogSequenceNumber;
+            this.LastDialogSequenceNumber = c.LastDialogSequenceNumber;
         }
 
         public Person Performer { get; set; }

@@ -14,5 +14,7 @@ namespace SAR.Modules.Script.Objects
         public Guid? SceneId { get; set; }
 
         public int ScriptSequenceNumber { get; set; }
+
+        public int RecordingCount { get; set; }
     }
 }

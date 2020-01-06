@@ -5,6 +5,7 @@ import SetupDao from "../Data/SetupDao";
 import ProjectDao from "../Data/ProjectDao";
 import PersonDao from "../Data/PersonDao";
 import CharacterDao from "../Data/CharacterDao";
+import ScriptDao from "../Data/ScriptDao";
 
 class SarService {
   static JWT = "";
@@ -62,6 +63,18 @@ class SarService {
     const dao = new CharacterDao(Environment.BASE_URL);
     return dao.saveCharacter(character);
   }
+
+  //Script
+  static getNextLinesByCharacter(projectId, characterId, start, length) {
+    const dao = new ScriptDao(Environment.BASE_URL);
+    return dao.getNextLinesByCharacter(projectId, characterId, start, length);
+  }
+
+  static getPreviousLinesByCharacter(projectId, characterId, start, length) {
+    const dao = new ScriptDao(Environment.BASE_URL);
+    return dao.getPreviousLinesByCharacter(projectId, characterId, start, length);
+  }
+
 
   //Authentication and setup
   static login(username, password) {

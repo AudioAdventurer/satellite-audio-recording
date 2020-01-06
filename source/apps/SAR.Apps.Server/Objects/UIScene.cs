@@ -2,7 +2,7 @@
 
 namespace SAR.Apps.Server.Objects
 {
-    public class Scene
+    public class UIScene
     {
         public Guid Id { get; set; }
         public int SequenceNumber { get; set; }

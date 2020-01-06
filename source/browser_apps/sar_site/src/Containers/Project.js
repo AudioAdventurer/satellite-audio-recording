@@ -89,6 +89,7 @@ export default class Project extends Component {
         this.setState({
           importingScript:false
         });
+        alert("Script Loaded");
       })
       .catch(e=>{
         alert(e.message);

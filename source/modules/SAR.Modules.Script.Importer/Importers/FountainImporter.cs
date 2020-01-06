@@ -66,7 +66,9 @@ namespace SAR.Modules.Script.Importer.Importers
                             c = new Character
                             {
                                 Name = ce.Name,
-                                ProjectId = projectId
+                                ProjectId = projectId,
+                                FirstDialogSequenceNumber = Int32.MaxValue,
+                                LastDialogSequenceNumber = Int32.MinValue
                             };
 
                             characters.Add(ce.Name, c);
@@ -99,7 +101,8 @@ namespace SAR.Modules.Script.Importer.Importers
                                 CharacterId = lastCharacter.Id,
                                 ProjectId = projectId,
                                 ScriptElementId = scriptElement.Id,
-                                ScriptSequenceNumber = scriptElement.SequenceNumber
+                                ScriptSequenceNumber = scriptElement.SequenceNumber,
+                                RecordingCount = 0
                             };
 
                             if (currentScene != null)
@@ -115,6 +118,28 @@ namespace SAR.Modules.Script.Importer.Importers
 
             //Clear any old information
             _scriptService.DeleteProjectScript(projectId);
+
+            //Find first and last lines for each character
+            foreach (var key in characters.Keys)
+            {
+                var character = characters[key];
+
+                foreach (var characterDialog in characterDialogs)
+                {
+                    if (characterDialog.CharacterId == character.Id)
+                    {
+                        if (characterDialog.ScriptSequenceNumber < character.FirstDialogSequenceNumber)
+                        {
+                            character.FirstDialogSequenceNumber = characterDialog.ScriptSequenceNumber;
+                        }
+
+                        if (characterDialog.ScriptSequenceNumber > character.LastDialogSequenceNumber)
+                        {
+                            character.LastDialogSequenceNumber = characterDialog.ScriptSequenceNumber;
+                        }
+                    }
+                }
+            }
 
             //Save the script and child data
             _scriptService.Save(project);
@@ -153,7 +178,14 @@ namespace SAR.Modules.Script.Importer.Importers
                 }
                 else
                 {
-                    project.ScriptProperties.Add(prop, element.Properties[prop]);
+                    if (project.ScriptProperties.ContainsKey(prop))
+                    {
+                        project.ScriptProperties[prop] = element.Properties[prop];
+                    }
+                    else
+                    {
+                        project.ScriptProperties.Add(prop, element.Properties[prop]);
+                    }
                 }
             }
         }

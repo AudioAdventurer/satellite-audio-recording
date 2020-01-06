@@ -15,6 +15,7 @@ namespace SAR.Modules.Script.Repos
             Collection.EnsureIndex("ProjectId");
             Collection.EnsureIndex("ScriptElementId");
             Collection.EnsureIndex("CharacterId");
+            Collection.EnsureIndex("ScriptSequenceNumber");
         }
 
         public IEnumerable<CharacterDialog> GetByProject(Guid projectId)
@@ -29,6 +30,32 @@ namespace SAR.Modules.Script.Repos
             Query q = Query.EQ("CharacterId", characterId);
 
             return Collection.Find(q).OrderBy(cd => cd.ScriptSequenceNumber);
+        }
+
+        public IEnumerable<CharacterDialog> GetNextByCharacter(
+            Guid characterId, 
+            int currentScriptSequenceNumber,
+            int limit = 1)
+        {
+            Query q = Query.And(
+                Query.All("ScriptSequenceNumber", Query.Ascending),
+                Query.EQ("CharacterId", characterId),
+                Query.GT("ScriptSequenceNumber", currentScriptSequenceNumber));
+
+            return Collection.Find(q, limit: limit);
+        }
+
+        public IEnumerable<CharacterDialog> GetPreviousByCharacter(
+            Guid characterId, 
+            int currentScriptSequenceNumber,
+            int limit = 1)
+        {
+            Query q = Query.And(
+                Query.All("ScriptSequenceNumber", Query.Descending),
+                Query.EQ("CharacterId", characterId),
+                Query.LT("ScriptSequenceNumber", currentScriptSequenceNumber));
+
+            return Collection.Find(q, limit: limit);
         }
 
         public void DeleteByProject(Guid projectId)

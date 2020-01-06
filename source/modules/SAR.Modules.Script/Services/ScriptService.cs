@@ -14,23 +14,26 @@ namespace SAR.Modules.Script.Services
         private readonly PersonRepo _personRepo;
         private readonly ProjectAccessRepo _projectAccessRepo;
         private readonly ProjectRepo _projectRepo;
+        private readonly RecordingRepo _recordingRepo;
         private readonly SceneRepo _sceneRepo;
         private readonly ScriptElementRepo _scriptElementRepo;
 
         public ScriptService(
             CharacterRepo characterRepo,
             CharacterDialogRepo characterDialogRepo,
-            SceneRepo sceneRepo,
-            ScriptElementRepo scriptElementRepo,
             PersonRepo personRepo,
             ProjectAccessRepo projectAccessRepo,
-            ProjectRepo projectRepo)
+            ProjectRepo projectRepo,
+            RecordingRepo recordingRepo,
+            SceneRepo sceneRepo,
+            ScriptElementRepo scriptElementRepo)
         {
             _characterRepo = characterRepo;
             _characterDialogRepo = characterDialogRepo;
             _personRepo = personRepo;
             _projectAccessRepo = projectAccessRepo;
             _projectRepo = projectRepo;
+            _recordingRepo = recordingRepo;
             _sceneRepo = sceneRepo;
             _scriptElementRepo = scriptElementRepo;
         }
@@ -181,6 +184,11 @@ namespace SAR.Modules.Script.Services
             _sceneRepo.DeleteByProject(projectId);
         }
 
+        public void DeleteRecordingsByProject(Guid projectId)
+        {
+            _recordingRepo.DeleteByProject(projectId);
+        }
+
         public void DeleteProjectScript(Guid projectId)
         {
             //Delete Elements for the scene
@@ -194,6 +202,9 @@ namespace SAR.Modules.Script.Services
 
             //Delete All Scenes
             DeleteScenesByProject(projectId);
+
+            //Delete all recordings
+            DeleteRecordingsByProject(projectId);
         }
 
         public void Save(CharacterDialog characterDialog)
@@ -201,9 +212,44 @@ namespace SAR.Modules.Script.Services
             _characterDialogRepo.Save(characterDialog);
         }
 
+        public CharacterDialog GetCharacterDialog(Guid characterDialogId)
+        {
+            return _characterDialogRepo.GetById(characterDialogId);
+        }
+
         public IEnumerable<CharacterDialog> GetCharacterDialogsByCharacter(Guid characterId)
         {
             return _characterDialogRepo.GetByCharacter(characterId);
+        }
+
+        public CharacterDialog GetNextCharacterDialogByCharacter(
+            Guid characterId, 
+            int currentScriptSequenceNumber)
+        {
+            return _characterDialogRepo.GetNextByCharacter(characterId, currentScriptSequenceNumber).FirstOrDefault();
+        }
+
+        public CharacterDialog GetPreviousCharacterDialogByCharacter(
+            Guid characterId, 
+            int currentScriptSequenceNumber)
+        {
+            return _characterDialogRepo.GetPreviousByCharacter(characterId, currentScriptSequenceNumber).FirstOrDefault();
+        }
+
+        public IEnumerable<CharacterDialog> GetNextCharacterDialogsByCharacter(
+            Guid characterId,
+            int currentScriptSequenceNumber,
+            int limit)
+        {
+            return _characterDialogRepo.GetNextByCharacter(characterId, currentScriptSequenceNumber, limit);
+        }
+
+        public IEnumerable<CharacterDialog> GetPreviousCharacterDialogsByCharacter(
+            Guid characterId, 
+            int currentScriptSequenceNumber,
+            int limit)
+        {
+            return _characterDialogRepo.GetPreviousByCharacter(characterId, currentScriptSequenceNumber, limit);
         }
 
         public void Save(Scene scene)
@@ -214,6 +260,11 @@ namespace SAR.Modules.Script.Services
         public IEnumerable<Scene> GetScenesByProject(Guid projectId)
         {
             return _sceneRepo.GetByProject(projectId);
+        }
+
+        public Scene GetScene(Guid sceneId)
+        {
+            return _sceneRepo.GetById(sceneId);
         }
     }
 }

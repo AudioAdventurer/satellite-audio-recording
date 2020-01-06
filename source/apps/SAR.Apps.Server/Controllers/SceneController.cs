@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SAR.Apps.Server.Helpers;
@@ -27,7 +26,7 @@ namespace SAR.Apps.Server.Controllers
 
         [HttpGet]
         [Route("api/projects/{projectId:Guid}/scenes")]
-        public ActionResult<IEnumerable<Scene>> GetScenes([FromRoute] Guid projectId)
+        public ActionResult<IEnumerable<UIScene>> GetScenes([FromRoute] Guid projectId)
         {
             var response = _projectService.GetScenes(
                 User.GetPersonId(), 

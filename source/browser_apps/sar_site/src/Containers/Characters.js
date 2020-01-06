@@ -53,7 +53,8 @@ export default class Characters extends Component {
       let rows =  list.map((item, i) => {
 
         if (item.Id != null) {
-          let url = `/projects/${this.state.projectId}/characters/${item.Id}`
+          let characterUrl = `/projects/${this.state.projectId}/characters/${item.Id}`
+          let linesUrl = `/projects/${this.state.projectId}/characters/${item.Id}/lines`
           let performerGivenName = "";
           let performerFamilyName = "";
 
@@ -64,7 +65,8 @@ export default class Characters extends Component {
 
           return (
             <tr key={item.Id}>
-              <td><Link to={url}>{item.Name}</Link></td>
+              <td><Link to={characterUrl}>{item.Name}</Link></td>
+              <td><Link to={linesUrl}>Lines</Link></td>
               <td>{performerGivenName}</td>
               <td>{performerFamilyName}</td>
             </tr>
@@ -105,6 +107,7 @@ export default class Characters extends Component {
               <thead>
               <tr>
                 <th>Name</th>
+                <th>Action</th>
                 <th>Performer First Name</th>
                 <th>Performer Last Name</th>
               </tr>

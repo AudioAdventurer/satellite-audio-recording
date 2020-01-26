@@ -47,7 +47,7 @@ namespace SAR.Modules.Script.Repos
             Query q = Query.And(
                 Query.EQ("ProjectId", projectId),
                 Query.GTE("SequenceNumber", start),
-                Query.LT("SequenceNumber", end));
+                Query.LTE("SequenceNumber", end));
 
             var items = Collection.Find(q);
             return items.OrderBy(i => i.SequenceNumber);

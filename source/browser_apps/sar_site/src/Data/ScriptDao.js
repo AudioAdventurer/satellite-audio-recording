@@ -10,4 +10,8 @@ export default class ScriptDao extends BaseDao {
     return this.read(`/projects/${projectId}/script/${characterId}/previous/${start}/limit/${limit}`);
   }
 
+  getDialogContext(projectId, dialogId) {
+    return this.read(`/projects/${projectId}/script/${dialogId}/context`);
+  }
+
 }

@@ -34,8 +34,7 @@ namespace SAR.Apps.Server.Controllers
                 var jwt = _jwtService.CreateJwt(webSession);
                 var response = new LoginResponse
                 {
-                    JWT = jwt,
-                    Session = webSession
+                    JWT = jwt
                 };
 
                 return Ok(response);

@@ -14,7 +14,7 @@ namespace SAR.Apps.Server.Objects
 
         public string Line { get; set; }
 
-        public Guid SceneId { get; set; }
+        public Guid? SceneId { get; set; }
 
         public string SceneNumber { get; set; }
 

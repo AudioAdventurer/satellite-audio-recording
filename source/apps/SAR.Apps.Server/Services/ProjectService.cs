@@ -613,49 +613,10 @@ namespace SAR.Apps.Server.Services
                     sceneId = focusCD.SceneId.Value;
                 }
 
-                var previousCDs = _scriptService.GetPreviousCharacterDialogsByCharacter(
-                        focusCD.CharacterId,
-                        focusCD.ScriptSequenceNumber,
-                        2)
-                    .Where(cd => cd.SceneId == sceneId)
-                    .OrderBy(cd => cd.ScriptSequenceNumber)
-                    .ToList();
-
-                var postCDs = _scriptService.GetNextCharacterDialogsByCharacter(
-                        focusCD.CharacterId,
-                        focusCD.ScriptSequenceNumber,
-                        2)
-                    .Where(cd => cd.SceneId == sceneId)
-                    .OrderBy(cd => cd.ScriptSequenceNumber)
-                    .ToList();
-
                 var scene = _scriptService.GetScene(sceneId);
                 
-                int start = 0;
-
-                //Start 2 dialog lines previous
-                if (previousCDs.Count == 2)
-                {
-                    start = previousCDs[0].ScriptSequenceNumber - 1;
-                }
-                else
-                {
-                    //If there aren't 2 dialog lines
-                    //Start at the beginning of the scene
-                    if (scene != null)
-                    {
-                        start = scene.ScriptSequenceNumber;
-                    }
-                }
-
-                int end = focusCD.ScriptSequenceNumber;
-
-                //End with up to two following dialog lines
-                //otherwise just end with the focus line
-                if (postCDs.Any())
-                {
-                    end = postCDs[postCDs.Count - 1].ScriptSequenceNumber;
-                }
+                int start = focusCD.ScriptSequenceNumber - 4;
+                int end = focusCD.ScriptSequenceNumber + 4;
                 
                 var elements = _scriptService.GetScriptElements(projectId, start, end);
 

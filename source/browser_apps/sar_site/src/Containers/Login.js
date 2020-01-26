@@ -38,7 +38,6 @@ export default class Login extends Component {
             SarService.login(this.state.username, this.state.password)
               .then(r =>{
                   let jwt = r.JWT;
-                  SarService.setSession(r.Session);
                   SarService.setCookie("username", this.state.username);
                   SarService.setJwt(jwt);
 

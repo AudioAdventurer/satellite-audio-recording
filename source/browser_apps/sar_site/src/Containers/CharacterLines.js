@@ -127,7 +127,7 @@ export default class CharacterLines extends Component {
       && list.length > 0) {
       let rows =  list.map((item, i) => {
         if (item.CharacterDialogId != null) {
-          let url =`/projects/${this.state.projectId}/dialog/${item.characterDialogId}`;
+          let url =`/projects/${this.state.projectId}/dialog/${item.CharacterDialogId}/record`;
 
           return (
             <tr key={item.CharacterDialogId}>

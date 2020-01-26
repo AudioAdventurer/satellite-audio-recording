@@ -9,7 +9,7 @@ import ScriptDao from "../Data/ScriptDao";
 
 class SarService {
   static JWT = "";
-  static Session = null;
+  static UserProperties = null;
 
   //Projects
   static getProjects() {
@@ -75,6 +75,11 @@ class SarService {
     return dao.getPreviousLinesByCharacter(projectId, characterId, start, length);
   }
 
+  static getDialogContext(projectId, dialogId) {
+    const dao = new ScriptDao(Environment.BASE_URL);
+    return dao.getDialogContext(projectId, dialogId);
+  }
+
 
   //Authentication and setup
   static login(username, password) {
@@ -95,10 +100,8 @@ class SarService {
   static setJwt(jwt) {
     SarService.JWT = jwt;
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + SarService.JWT;
-  }
 
-  static setSession(session) {
-    SarService.Session = session;
+    this.UserProperties = JSON.parse(atob(jwt.split('.')[1]));
   }
 
   static setCookie(cname, cvalue, exdays) {

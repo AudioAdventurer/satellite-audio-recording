@@ -41,6 +41,7 @@ namespace SAR.Libraries.Common.Security
             claimsIdentity.AddClaim(new Claim("Email", userSession.Email));
             claimsIdentity.AddClaim(new Claim("GivenName", userSession.GivenName));
             claimsIdentity.AddClaim(new Claim("FamilyName", userSession.FamilyName));
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, userSession.UserType));
 
             return claimsIdentity;
         }

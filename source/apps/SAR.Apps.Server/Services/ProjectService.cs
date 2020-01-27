@@ -639,5 +639,45 @@ namespace SAR.Apps.Server.Services
 
             throw new UnauthorizedAccessException();
         }
+
+        public Guid? GetNextLineId(
+            Guid userPersonId,
+            Guid projectId,
+            Guid characterDialogId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                Guid sceneId = Guid.Empty;
+                var focusCd = _scriptService.GetCharacterDialog(characterDialogId);
+
+                var next = _scriptService.GetNextCharacterDialogByCharacter(
+                    focusCd.CharacterId,
+                    focusCd.ScriptSequenceNumber);
+
+                return next?.Id;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public Guid? GetPreviousLineId(
+            Guid userPersonId,
+            Guid projectId,
+            Guid characterDialogId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                Guid sceneId = Guid.Empty;
+                var focusCd = _scriptService.GetCharacterDialog(characterDialogId);
+
+                var previous = _scriptService.GetPreviousCharacterDialogByCharacter(
+                    focusCd.CharacterId,
+                    focusCd.ScriptSequenceNumber);
+
+                return previous?.Id;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
     }
 }

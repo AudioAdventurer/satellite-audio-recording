@@ -226,14 +226,18 @@ namespace SAR.Modules.Script.Services
             Guid characterId, 
             int currentScriptSequenceNumber)
         {
-            return _characterDialogRepo.GetNextByCharacter(characterId, currentScriptSequenceNumber).FirstOrDefault();
+            return _characterDialogRepo
+                .GetNextByCharacter(characterId, currentScriptSequenceNumber)
+                .FirstOrDefault();
         }
 
         public CharacterDialog GetPreviousCharacterDialogByCharacter(
             Guid characterId, 
             int currentScriptSequenceNumber)
         {
-            return _characterDialogRepo.GetPreviousByCharacter(characterId, currentScriptSequenceNumber).FirstOrDefault();
+            return _characterDialogRepo
+                .GetPreviousByCharacter(characterId, currentScriptSequenceNumber)
+                .FirstOrDefault();
         }
 
         public IEnumerable<CharacterDialog> GetNextCharacterDialogsByCharacter(

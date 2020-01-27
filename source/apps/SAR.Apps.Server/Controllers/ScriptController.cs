@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -112,12 +113,27 @@ namespace SAR.Apps.Server.Controllers
 
         [HttpGet]
         [Route("api/projects/{projectId:Guid}/script/{characterDialogId:Guid}/context")]
-        public ActionResult<IEnumerable<ScriptLine>> GetScriptLineContext(
+        public ActionResult<ScriptContextResponse> GetScriptLineContext(
             [FromRoute] Guid projectId,
             [FromRoute] Guid characterDialogId)
         {
-            var response = _projectService.GetScriptLineContext(
-                User.GetPersonId(),
+            var response = new ScriptContextResponse();
+
+            Guid userPersonId = User.GetPersonId();
+
+            response.Context = _projectService.GetScriptLineContext(
+                    userPersonId,
+                    projectId,
+                    characterDialogId)
+                .ToList();
+
+            response.NextLine = _projectService.GetNextLineId(
+                userPersonId,
+                projectId,
+                characterDialogId);
+
+            response.PreviousLine = _projectService.GetPreviousLineId(
+                userPersonId,
                 projectId,
                 characterDialogId);
 

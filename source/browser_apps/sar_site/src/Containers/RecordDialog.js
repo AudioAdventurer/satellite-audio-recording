@@ -1,8 +1,7 @@
 import "./RecordDialog.css";
 import React, {Component} from "react";
 import SarService from "../Services/SarService";
-import {Row, Col, Table} from "react-bootstrap";
-import { Link } from 'react-router-dom'
+import {Row, Col, Button} from "react-bootstrap";
 
 export default class RecordDialog extends Component {
   constructor(props) {
@@ -15,6 +14,8 @@ export default class RecordDialog extends Component {
       projectId: projectId,
       dialogId: dialogId,
       currentDialog: null,
+      nextDialogId: null,
+      previousDialogId: null,
       dialog:[]
     };
 
@@ -27,12 +28,28 @@ export default class RecordDialog extends Component {
     this.loadDialogContext(this.state.projectId, this.state.dialogId);
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    let dialogId = this.props.match.params.dialogId;
+
+    if (dialogId !== this.state.dialogId) {
+      this.setState({
+        dialogId: dialogId
+      }, () => {
+        this.loadDialogContext(this.state.projectId, this.state.dialogId);
+      });
+    }
+  }
+
   loadDialogContext(projectId, dialogId) {
     SarService.getDialogContext(projectId, dialogId)
       .then(r => {
+        let dialog = r.Context;
+        let previous = r.PreviousLine;
+        let next = r.NextLine;
+
         let currentDialog = null;
 
-        r.forEach( line => {
+        dialog.forEach( line => {
             if (line.CharacterDialogId !== null
                 && line.CharacterDialogId === dialogId) {
               currentDialog = line;
@@ -40,8 +57,10 @@ export default class RecordDialog extends Component {
         });
 
         this.setState({
-          dialog: r,
-          currentDialog: currentDialog
+          dialog: dialog,
+          currentDialog: currentDialog,
+          nextDialogId: next,
+          previousDialogId: previous
         });
       })
       .catch(e => {
@@ -50,13 +69,14 @@ export default class RecordDialog extends Component {
   }
 
   getNextLine() {
-
+    let url = `/projects/${this.state.projectId}/dialog/${this.state.nextDialogId}/record`;
+    this.props.history.push(url);
   }
 
   getPreviousLine() {
-
+    let url = `/projects/${this.state.projectId}/dialog/${this.state.previousDialogId}/record`;
+    this.props.history.push(url);
   }
-
 
   renderTableBody(list) {
     if (list != null
@@ -65,7 +85,7 @@ export default class RecordDialog extends Component {
 
         if (item.LineType === 'Scene') {
           return(
-            <Row>
+            <Row key={i}>
               <Col style={{
                 fontWeight:'bold',
                 paddingTop: '5px',
@@ -76,7 +96,7 @@ export default class RecordDialog extends Component {
             </Row>);
         } else if (item.LineType === 'Character') {
           return(
-            <Row>
+            <Row key={i}>
               <Col style={{
                 textAlign:'center',
                 paddingTop: '5px',
@@ -88,10 +108,10 @@ export default class RecordDialog extends Component {
         } else if (item.LineType === 'Dialogue') {
           if (item.CharacterDialogId === null) {
             return (
-              <Row>
+              <Row key={i}>
                 <Col style={{
                   backgroundColor: 'Gainsboro',
-                  paddingTop: '5px',
+                  paddingTop: '0px',
                   paddingBottom: '5px',
                   paddingLeft:'100px',
                   paddingRight:'100px'
@@ -101,7 +121,7 @@ export default class RecordDialog extends Component {
               </Row>);
           } else {
             return (
-              <Row>
+              <Row key={i}>
                 <Col style={{
                   backgroundColor:'white',
                   border:'2px solid black',
@@ -116,7 +136,7 @@ export default class RecordDialog extends Component {
           }
         } else if (item.LineType === 'Action') {
           return (
-            <Row>
+            <Row key={i}>
               <Col style={{
                 paddingTop: '5px',
                 paddingBottom: '5px',
@@ -126,7 +146,7 @@ export default class RecordDialog extends Component {
             </Row>);
         } else if (item.lineType === 'Parenthetical') {
           return (
-            <Row>
+            <Row key={i}>
               <Col style={{
                 paddingTop: '5px',
                 paddingBottom: '5px',
@@ -138,13 +158,13 @@ export default class RecordDialog extends Component {
       });
 
       return(
-        <tbody>
-        {rows}
-        </tbody>);
+        <div>
+          {rows}
+        </div>);
     }
 
     return(
-      <tbody></tbody>);
+      <div/>);
   }
 
   render() {
@@ -158,10 +178,14 @@ export default class RecordDialog extends Component {
 
         <Row>
           <Col md={9}>
-            <Row>
+            <Row style={{paddingTop:10, paddingBottom:10}}>
               <Col>
                 <div className="float-md-left">
-                  <button variant="secondary" size="sm" onClick={this.getPreviousLine}>Previous Line</button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={this.state.previousDialogId === null}
+                    onClick={this.getPreviousLine}>Previous Line</Button>
                 </div>
               </Col>
               <Col>
@@ -178,20 +202,17 @@ export default class RecordDialog extends Component {
               </Col>
               <Col>
                 <div className="float-md-right">
-                  <button variant="secondary" size="sm" onClick={this.getNextLine}>Next Line</button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={this.state.nextDialogId === null}
+                    onClick={this.getNextLine}>Next Line</Button>
                 </div>
               </Col>
             </Row>
             <Row>
               <Col>
-                <Table>
-                  <thead>
-                  <tr>
-                    <th width={150}>Text</th>
-                  </tr>
-                  </thead>
-                  { this.renderTableBody(this.state.dialog) }
-                </Table>
+                { this.renderTableBody(this.state.dialog) }
               </Col>
             </Row>
           </Col>

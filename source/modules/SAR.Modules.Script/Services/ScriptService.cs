@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using SAR.Modules.Script.Objects;
 using SAR.Modules.Script.Repos;
@@ -112,6 +113,16 @@ namespace SAR.Modules.Script.Services
         public void Save(ScriptElement element)
         {
             _scriptElementRepo.Save(element);
+        }
+
+        public void Save(Recording recording)
+        {
+            _recordingRepo.Save(recording);
+        }
+
+        public IEnumerable<Recording> GetRecordings(Guid characterDialogId)
+        {
+            return _recordingRepo.GetByCharacterDialog(characterDialogId);
         }
 
         public ScriptElement GetScriptElement(Guid elementId)

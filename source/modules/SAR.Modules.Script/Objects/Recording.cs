@@ -13,11 +13,10 @@ namespace SAR.Modules.Script.Objects
 
         public int SequenceNumber { get; set; }
 
-        public string FileName { get; set; }
+        public DateTime RecordedOn { get; set; }
 
         public int SampleRate { get; set; }
 
         public long Duration { get; set; }
-
     }
 }

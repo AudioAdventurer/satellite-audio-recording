@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using SAR.Apps.Server.Objects;
+using SAR.Libraries.Common.Storage;
 using SAR.Libraries.Fountain.Objects;
 using SAR.Modules.Script.Constants;
 using SAR.Modules.Script.Helpers;
@@ -16,13 +18,16 @@ namespace SAR.Apps.Server.Services
     {
         private readonly ScriptService _scriptService;
         private readonly ServerService _serverService;
+        private readonly IFileStorage _fileStorage;
 
         public ProjectService(
             ScriptService scriptService,
-            ServerService serverService)
+            ServerService serverService,
+            IFileStorage fileStorage)
         {
             _scriptService = scriptService;
             _serverService = serverService;
+            _fileStorage = fileStorage;
         }
 
         public IEnumerable<Project> GetProjects(Guid userPersonId)
@@ -675,6 +680,75 @@ namespace SAR.Apps.Server.Services
                     focusCd.ScriptSequenceNumber);
 
                 return previous?.Id;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public void SaveRecording(
+            Guid userPersonId,
+            Guid projectId,
+            Guid characterDialogId,
+            Stream data)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var characterDialog = _scriptService.GetCharacterDialog(characterDialogId);
+
+                var recordings = _scriptService
+                    .GetRecordings(characterDialogId)
+                    .ToList();
+
+                var recording = new Recording
+                {
+                    ProjectId = projectId,
+                    CharacterDialogId = characterDialogId,
+                    PerformerPersonId = userPersonId,
+                    RecordedOn = DateTime.UtcNow,
+                    SequenceNumber = recordings.Count + 1
+                };
+
+                _scriptService.Save(recording);
+
+                string tempPath = _fileStorage.ToPath(
+                    projectId.ToString(),
+                    "recordings",
+                    $"{recording.Id}.wav");
+                _fileStorage.SaveFile(tempPath, data);
+
+                return;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<Recording> GetRecordings(
+            Guid userPersonId,
+            Guid projectId,
+            Guid characterDialogId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                return _scriptService.GetRecordings(characterDialogId);
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public Stream GetRecording(
+            Guid userPersonId,
+            Guid projectId,
+            Guid recordingId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                string tempPath = _fileStorage.ToPath(
+                    projectId.ToString(),
+                    "recordings",
+                    $"{recordingId.ToString()}.wav"
+                );
+
+                return _fileStorage.GetFile(tempPath);
             }
 
             throw new UnauthorizedAccessException();

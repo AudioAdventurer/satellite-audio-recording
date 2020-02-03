@@ -53,4 +53,22 @@ export default class BaseDao {
         })
     });
   }
+
+  readFile(command) {
+    return new Promise((resolve, reject) => {
+      const url = this.baseUrl + command;
+
+      axios({
+          method: 'get',
+          url: url,
+          responseType: 'blob'
+        })
+        .then(res => {
+          resolve(res.data);
+        })
+        .catch(error => {
+          reject(error);
+        })
+    });
+  }
 }

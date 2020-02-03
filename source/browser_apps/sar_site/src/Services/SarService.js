@@ -6,6 +6,7 @@ import ProjectDao from "../Data/ProjectDao";
 import PersonDao from "../Data/PersonDao";
 import CharacterDao from "../Data/CharacterDao";
 import ScriptDao from "../Data/ScriptDao";
+import RecordingDao from "../Data/RecordingDao";
 
 class SarService {
   static JWT = "";
@@ -80,6 +81,26 @@ class SarService {
     return dao.getDialogContext(projectId, dialogId);
   }
 
+  //Recordings
+  static saveRecording(projectId, dialogId, formData) {
+    const dao = new RecordingDao(Environment.BASE_URL);
+    return dao.saveRecording(projectId, dialogId, formData);
+  }
+
+  static getRecordings(projectId, dialogId) {
+    const dao = new RecordingDao(Environment.BASE_URL);
+    return dao.getRecordings(projectId, dialogId);
+  }
+
+  static getRecordingUrl(projectId, recordingId) {
+    const dao = new RecordingDao(Environment.BASE_URL);
+    return dao.getRecordingUrl(projectId, recordingId);
+  }
+
+  static getRecording(projectId, recordingId) {
+    const dao = new RecordingDao(Environment.BASE_URL);
+    return dao.getRecording(projectId, recordingId);
+  }
 
   //Authentication and setup
   static login(username, password) {

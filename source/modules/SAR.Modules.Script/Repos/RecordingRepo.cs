@@ -14,7 +14,6 @@ namespace SAR.Modules.Script.Repos
             Collection.EnsureIndex("ProjectId");
             Collection.EnsureIndex("PerformerPersonId");
             Collection.EnsureIndex("CharacterDialogId");
-
         }
 
         public void DeleteByProject(Guid projectId)

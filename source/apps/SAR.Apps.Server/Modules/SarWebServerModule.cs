@@ -5,6 +5,7 @@ using SAR.Apps.Server.Services;
 using SAR.Libraries.Common.Helpers;
 using SAR.Libraries.Common.Interfaces;
 using SAR.Libraries.Common.Logging;
+using SAR.Libraries.Common.Storage;
 
 namespace SAR.Apps.Server.Modules
 {
@@ -37,6 +38,9 @@ namespace SAR.Apps.Server.Modules
             //Local Services
             builder.RegisterType<AuthService>();
             builder.RegisterType<ProjectService>();
+
+            builder.Register(c => new LocalStorage(_config.FilesFolder))
+                .As<IFileStorage>();
         }
 
         private void SetupFolders()

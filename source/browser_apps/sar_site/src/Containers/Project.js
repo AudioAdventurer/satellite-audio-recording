@@ -72,7 +72,7 @@ export default class Project extends Component {
     this.setState({
       selectedFile: event.target.files[0]
     });
-  }
+  };
 
   loadFile = event => {
     event.preventDefault();
@@ -97,7 +97,6 @@ export default class Project extends Component {
           importingScript:false
         });
       });
-
   };
 
   render() {

@@ -2,6 +2,12 @@ import "./RecordDialog.css";
 import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Button} from "react-bootstrap";
+import { ReactMic as Visualizer } from "react-mic";
+import hark from "hark";
+import FocusDialogViewer from "../Components/FocusDialogViewer";
+import Recorder from "../Components/Recorder";
+import RecordingInstructions from "../Components/RecordingInstructions";
+import Recordings from "../Components/Recordings";
 
 export default class RecordDialog extends Component {
   constructor(props) {
@@ -16,16 +22,30 @@ export default class RecordDialog extends Component {
       currentDialog: null,
       nextDialogId: null,
       previousDialogId: null,
-      dialog:[]
+      cancelled: false,
+      shouldRecord: false,
+      blob: null,
+      savingBlob: false,
+      dialog:[],
+      recordings:[]
     };
 
     this.loadDialogContext = this.loadDialogContext.bind(this);
+    this.loadRecordings = this.loadRecordings.bind(this);
+
     this.getPreviousLine = this.getPreviousLine.bind(this);
     this.getNextLine = this.getNextLine.bind(this);
+    this.processBlob = this.processBlob.bind(this);
   }
 
   componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyDown, false);
     this.loadDialogContext(this.state.projectId, this.state.dialogId);
+    this.loadRecordings(this.state.projectId, this.state.dialogId);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown, false);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -36,8 +56,21 @@ export default class RecordDialog extends Component {
         dialogId: dialogId
       }, () => {
         this.loadDialogContext(this.state.projectId, this.state.dialogId);
+        this.loadRecordings(this.state.projectId, this.state.dialogId);
       });
     }
+  }
+
+  loadRecordings(projectId, dialogId) {
+    SarService.getRecordings(projectId, dialogId)
+      .then(r=> {
+        this.setState({
+          recordings: r
+        });
+      })
+      .catch(error => {
+        alert(error.message);
+      });
   }
 
   loadDialogContext(projectId, dialogId) {
@@ -60,7 +93,9 @@ export default class RecordDialog extends Component {
           dialog: dialog,
           currentDialog: currentDialog,
           nextDialogId: next,
-          previousDialogId: previous
+          previousDialogId: previous,
+          shouldRecord: false,
+          blob: null,
         });
       })
       .catch(e => {
@@ -69,103 +104,106 @@ export default class RecordDialog extends Component {
   }
 
   getNextLine() {
-    let url = `/projects/${this.state.projectId}/dialog/${this.state.nextDialogId}/record`;
-    this.props.history.push(url);
+    if (this.state.nextDialogId !== null
+        && !this.state.savingBlob) {
+      let url = `/projects/${this.state.projectId}/dialog/${this.state.nextDialogId}/record`;
+      this.props.history.push(url);
+    }
   }
 
   getPreviousLine() {
-    let url = `/projects/${this.state.projectId}/dialog/${this.state.previousDialogId}/record`;
-    this.props.history.push(url);
+    if (this.state.previousDialogId !== null
+        && !this.state.savingBlob) {
+      let url = `/projects/${this.state.projectId}/dialog/${this.state.previousDialogId}/record`;
+      this.props.history.push(url);
+    }
   }
 
-  renderTableBody(list) {
-    if (list != null
-      && list.length > 0) {
-      let rows =  list.map((item, i) => {
-
-        if (item.LineType === 'Scene') {
-          return(
-            <Row key={i}>
-              <Col style={{
-                fontWeight:'bold',
-                paddingTop: '5px',
-                paddingBottom: '5px',
-                backgroundColor:'Gainsboro'}} >
-                {item.Line}
-              </Col>
-            </Row>);
-        } else if (item.LineType === 'Character') {
-          return(
-            <Row key={i}>
-              <Col style={{
-                textAlign:'center',
-                paddingTop: '5px',
-                paddingBottom: '0px',
-                backgroundColor:'Gainsboro'}}>
-                {item.Line}
-              </Col>
-            </Row>);
-        } else if (item.LineType === 'Dialogue') {
-          if (item.CharacterDialogId === null) {
-            return (
-              <Row key={i}>
-                <Col style={{
-                  backgroundColor: 'Gainsboro',
-                  paddingTop: '0px',
-                  paddingBottom: '5px',
-                  paddingLeft:'100px',
-                  paddingRight:'100px'
-                }}>
-                  {item.Line}
-                </Col>
-              </Row>);
-          } else {
-            return (
-              <Row key={i}>
-                <Col style={{
-                  backgroundColor:'white',
-                  border:'2px solid black',
-                  paddingTop:'20px',
-                  paddingBottom:'20px',
-                  paddingLeft:'100px',
-                  paddingRight:'100px'
-                }}>
-                  {item.Line}
-                </Col>
-              </Row>);
-          }
-        } else if (item.LineType === 'Action') {
-          return (
-            <Row key={i}>
-              <Col style={{
-                paddingTop: '5px',
-                paddingBottom: '5px',
-                backgroundColor:'Gainsboro'}}>
-                {item.Line}
-              </Col>
-            </Row>);
-        } else if (item.lineType === 'Parenthetical') {
-          return (
-            <Row key={i}>
-              <Col style={{
-                paddingTop: '5px',
-                paddingBottom: '5px',
-                backgroundColor:'Gainsboro'}}>
-                ({item.Line})
-              </Col>
-            </Row>);
-        }
+  recordHandler = () => {
+    setTimeout(() => {
+      this.setState((state, props) => {
+        return {
+          cancelled: false,
+          shouldRecord: true,
+          play: false
+        };
       });
+    }, 500);
+  };
 
-      return(
-        <div>
-          {rows}
-        </div>);
+  processBlob = blob => {
+    if (!this.state.cancelled) {
+      this.setState({
+        blob: blob,
+        savingBlob: true,
+      }, () => {
+        let data = new FormData();
+        data.append('file', blob);
+
+        SarService.saveRecording(this.state.projectId, this.state.dialogId, data)
+          .then(r => {
+            this.setState({
+              savingBlob:false
+            });
+          })
+          .catch(e=>{
+            alert(e.message);
+            this.setState({
+              savingBlob:false
+            });
+          });
+      });
+    }
+  };
+
+  handleKeyDown = event => {
+    // space bar code
+    if (event.keyCode === 32) {
+      if (!this.state.shouldRecord) {
+        event.preventDefault();
+        this.recordHandler();
+      }
     }
 
-    return(
-      <div/>);
-  }
+    // esc key code
+    if (event.keyCode === 27) {
+      event.preventDefault();
+
+      this.setState({
+        cancelled: true,
+        shouldRecord: false,
+        blob: null,
+      });
+    }
+
+    // previous line of dialog
+    if (event.keyCode === 37) {
+      if (!this.state.play) {
+        this.getPreviousLine();
+      }
+    }
+
+    // next line of dialog
+    if (event.keyCode === 39) {
+      if (!this.state.play) {
+        this.getNextLine();
+      }
+    }
+  };
+
+  silenceDetection = stream => {
+    const options = {
+      interval: "150",
+      threshold: -80
+    };
+    const speechEvents = hark(stream, options);
+
+    speechEvents.on("stopped_speaking", () => {
+      this.setState({
+        shouldRecord: false
+      });
+    });
+  };
 
   render() {
     return (
@@ -175,7 +213,6 @@ export default class RecordDialog extends Component {
             <h3>Record Dialog</h3>
           </Col>
         </Row>
-
         <Row>
           <Col md={9}>
             <Row style={{paddingTop:10, paddingBottom:10}}>
@@ -184,19 +221,25 @@ export default class RecordDialog extends Component {
                   <Button
                     variant="secondary"
                     size="sm"
-                    disabled={this.state.previousDialogId === null}
+                    disabled={this.state.previousDialogId === null
+                              || this.state.savingBlob}
                     onClick={this.getPreviousLine}>Previous Line</Button>
                 </div>
               </Col>
               <Col>
                 <Row>
                   <Col>
-                    Recording Controls
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-
+                    <Visualizer
+                      className="wavedisplay"
+                      record={this.state.shouldRecord}
+                      backgroundColor={"#222222"}
+                      strokeColor={"#FD9E66"}
+                    />
+                    <Recorder
+                      command={this.state.shouldRecord ? "start" : "stop"}
+                      onStop={this.processBlob}
+                      gotStream={this.silenceDetection}
+                    />
                   </Col>
                 </Row>
               </Col>
@@ -205,29 +248,21 @@ export default class RecordDialog extends Component {
                   <Button
                     variant="secondary"
                     size="sm"
-                    disabled={this.state.nextDialogId === null}
+                    disabled={this.state.nextDialogId === null
+                              || this.state.savingBlob }
                     onClick={this.getNextLine}>Next Line</Button>
                 </div>
               </Col>
             </Row>
-            <Row>
-              <Col>
-                { this.renderTableBody(this.state.dialog) }
-              </Col>
-            </Row>
+            <FocusDialogViewer
+              dialog={this.state.dialog}
+            />
           </Col>
-          <Col>
-            <Row style={{paddingTop:30}}>
-              <Col>
-                <h4>Existing Recordings</h4>
-                <p>X of Y recordings complete</p>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                ...
-              </Col>
-            </Row>
+          <Col md={3}>
+            <RecordingInstructions />
+            <Recordings
+              recordings={this.state.recordings}
+            />
           </Col>
         </Row>
       </div>

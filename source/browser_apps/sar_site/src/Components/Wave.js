@@ -18,7 +18,7 @@ export default class Wave extends Component {
     const { waveColor } = this.props;
 
     this.wavesurfer = WaveSurfer.create({
-      container: "#waveform",
+      container: `#waveform_${this.props.sequenceNumber}`,
       waveColor: waveColor ? waveColor : "#FD9E66"
     });
 
@@ -35,12 +35,15 @@ export default class Wave extends Component {
   }
 
   componentDidUpdate(prevProps ) {
-    if (this.props.play) {
-      console.log("play");
-      this.wavesurfer.play();
-    } else {
-      console.log("pausing");
-      this.wavesurfer.pause();
+    if (this.props.projectId !== prevProps.projectId
+        || this.props.recordingId !== prevProps.recordingId) {
+      this.wavesurfer.empty();
+
+      this.setState({
+        blob: null
+      }, () => {
+        this.loadData()
+      });
     }
   }
 
@@ -50,10 +53,12 @@ export default class Wave extends Component {
 
     SarService.getRecording(projectId, recordingId)
       .then(r => {
-        this.wavesurfer.loadBlob(r);
+          this.wavesurfer.loadBlob(r);
         })
       .catch(error => {
-        alert(error.message);
+        if (error.response.status !== 404) {
+          alert(error.message);
+        }
       });
   }
 
@@ -64,6 +69,9 @@ export default class Wave extends Component {
         <Col>
           <Row>
             <Col>
+              {this.props.sequenceNumber}
+            </Col>
+            <Col>
               Play
             </Col>
             <Col>
@@ -73,7 +81,7 @@ export default class Wave extends Component {
           <Row>
             <Col>
               <div
-                id="waveform"
+                id={`waveform_${this.props.sequenceNumber}`}
                 className={cssClass}
               />
             </Col>

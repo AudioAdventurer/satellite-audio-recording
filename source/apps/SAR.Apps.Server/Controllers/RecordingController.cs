@@ -73,15 +73,20 @@ namespace SAR.Apps.Server.Controllers
             Guid personId = User.GetPersonId();
             using (var stream = _projectService.GetRecording(personId, projectId, recordingId))
             {
-                Byte[] data;
+                Byte[] data = null;
 
-                using (var memoryStream = new MemoryStream())
+                if (stream != null)
                 {
-                    stream.CopyTo(memoryStream);
-                    data = memoryStream.ToArray();
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        stream.CopyTo(memoryStream);
+                        data = memoryStream.ToArray();
+                    }
+
+                    return File(data, "audio/wav");
                 }
 
-                return File(data, "audio/wav");
+                return NotFound();
             }
         }
     }

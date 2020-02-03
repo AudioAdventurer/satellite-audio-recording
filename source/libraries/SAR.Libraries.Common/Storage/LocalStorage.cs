@@ -21,7 +21,13 @@ namespace SAR.Libraries.Common.Storage
         public Stream GetFile(string path)
         {
             var temp = Path.Combine(_basePath, path);
-            return File.OpenRead(temp);
+
+            if (File.Exists(temp))
+            {
+                return File.OpenRead(temp);
+            }
+
+            return null;
         }
 
         public void SaveFile(string path, Stream data)

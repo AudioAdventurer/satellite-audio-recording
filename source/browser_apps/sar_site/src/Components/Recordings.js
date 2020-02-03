@@ -23,19 +23,11 @@ export default class Recordings extends React.Component {
         return (
           <Row key={i}>
             <Col>
-              <Row>
-                <Col>
-                  {item.SequenceNumber}
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Wave
-                    projectId= {item.ProjectId}
-                    recordingId= { item.Id }
-                  />
-                </Col>
-              </Row>
+              <Wave
+                sequenceNumber={item.SequenceNumber}
+                projectId= {item.ProjectId}
+                recordingId= { item.Id }
+              />
             </Col>
           </Row>
         );

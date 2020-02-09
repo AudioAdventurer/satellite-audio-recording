@@ -16,8 +16,10 @@ namespace SAR.Modules.Script.Repos
 
         public IEnumerable<Character> GetByProject(Guid projectId)
         {
-            var q = Query.EQ("ProjectId", projectId);
-            return Collection.Find(q);
+            return Collection.Query()
+                .Where(c => c.ProjectId == projectId)
+                .OrderBy(c => c.Name)
+                .ToEnumerable();
         }
 
         public void DeleteByProject(Guid projectId)

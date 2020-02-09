@@ -20,16 +20,18 @@ namespace SAR.Modules.Script.Repos
 
         public IEnumerable<CharacterDialog> GetByProject(Guid projectId)
         {
-            var q = Query.EQ("ProjectId", projectId);
-
-            return Collection.Find(q).OrderBy(cd => cd.ScriptSequenceNumber);
+            return Collection.Query()
+                .Where(cd=> cd.ProjectId == projectId)
+                .OrderBy(cd => cd.ScriptSequenceNumber)
+                .ToEnumerable();
         }
 
         public IEnumerable<CharacterDialog> GetByCharacter(Guid characterId)
         {
-            var q = Query.EQ("CharacterId", characterId);
-
-            return Collection.Find(q).OrderBy(cd => cd.ScriptSequenceNumber);
+            return Collection.Query()
+                .Where(cd => cd.CharacterId == characterId)
+                .OrderBy(cd => cd.ScriptSequenceNumber)
+                .ToEnumerable();
         }
 
         public IEnumerable<CharacterDialog> GetNextByCharacter(

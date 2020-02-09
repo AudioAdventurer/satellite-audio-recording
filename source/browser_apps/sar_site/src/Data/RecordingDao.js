@@ -16,4 +16,8 @@ export default class RecordingDao extends BaseDao {
   getRecordingUrl(projectId, recordingId){
     return `${super.baseUrl}/projects/${projectId}/recordings/${recordingId}`;
   }
+
+  deleteRecording(projectId, recordingId) {
+    return this.delete(`/projects/${projectId}/recordings/${recordingId}`);
+  }
 }

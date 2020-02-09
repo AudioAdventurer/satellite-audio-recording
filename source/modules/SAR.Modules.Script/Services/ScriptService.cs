@@ -125,6 +125,11 @@ namespace SAR.Modules.Script.Services
             return _recordingRepo.GetByCharacterDialog(characterDialogId);
         }
 
+        public Recording GetRecording(Guid recordingId)
+        {
+            return _recordingRepo.GetById(recordingId);
+        }
+
         public ScriptElement GetScriptElement(Guid elementId)
         {
             return _scriptElementRepo.GetById(elementId);
@@ -198,6 +203,11 @@ namespace SAR.Modules.Script.Services
         public void DeleteRecordingsByProject(Guid projectId)
         {
             _recordingRepo.DeleteByProject(projectId);
+        }
+
+        public void DeleteRecording(Guid recordingId)
+        {
+            _recordingRepo.Delete(recordingId);
         }
 
         public void DeleteProjectScript(Guid projectId)

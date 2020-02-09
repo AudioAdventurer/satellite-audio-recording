@@ -6,6 +6,20 @@ export default class BaseDao {
     this.baseUrl = baseUrl;
   }
 
+  delete(command) {
+    return new Promise((resolve, reject) => {
+      const url = this.baseUrl + command;
+
+      axios.delete(url)
+        .then(res => {
+          resolve(res.data);
+        })
+        .catch(error => {
+          reject(error);
+        })
+    });
+  }
+
   write(command, obj) {
     return new Promise((resolve, reject) => {
       const url = this.baseUrl + command;

@@ -89,5 +89,20 @@ namespace SAR.Apps.Server.Controllers
                 return NotFound();
             }
         }
+
+        [HttpDelete]
+        [Route("api/projects/{projectId:Guid}/recordings/{recordingId:Guid}")]
+        public ActionResult DeleteRecording(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid recordingId)
+        {
+            Guid personId = User.GetPersonId();
+
+            _projectService.DeleteRecording(personId, projectId, recordingId);
+
+            //TODO - Delete wave file
+
+            return Ok();
+        }
     }
 }

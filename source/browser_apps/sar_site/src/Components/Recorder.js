@@ -1,7 +1,7 @@
 /*
 This code was modified to work with the lastest React Version.
 Original code can be found here
-https://github.com/agrasley/react-recorder/blob/master/src/Recorder.js
+                                                                                                                                          https://github.com/agrasley/react-recorder/blob/master/src/Recorder.js
 The MIT License (MIT)
 Copyright (c) 2016 Alexander Grasley
 Permission is hereby granted, free of charge, to any person obtaining a copy

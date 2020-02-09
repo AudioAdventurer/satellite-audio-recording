@@ -753,5 +753,25 @@ namespace SAR.Apps.Server.Services
 
             throw new UnauthorizedAccessException();
         }
+
+        public Stream DeleteRecording(
+            Guid userPersonId,
+            Guid projectId,
+            Guid recordingId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var recording = _scriptService.GetRecording(recordingId);
+
+                if (recording.PerformerPersonId.Equals(userPersonId)
+                    || IsProjectOwner(userPersonId, projectId))
+                {
+                    _scriptService.DeleteRecording(recordingId);
+
+                }
+            }
+
+            throw new UnauthorizedAccessException();
+        }
     }
 }

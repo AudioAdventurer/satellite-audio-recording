@@ -31,7 +31,6 @@ export default class RecordDialog extends Component {
     };
 
     this.loadDialogContext = this.loadDialogContext.bind(this);
-    this.loadRecordings = this.loadRecordings.bind(this);
 
     this.getPreviousLine = this.getPreviousLine.bind(this);
     this.getNextLine = this.getNextLine.bind(this);
@@ -41,8 +40,7 @@ export default class RecordDialog extends Component {
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown, false);
     this.loadDialogContext(this.state.projectId, this.state.dialogId);
-    this.loadRecordings(this.state.projectId, this.state.dialogId);
-  }
+                              }
 
   componentWillUnmount() {
     document.removeEventListener("keydown", this.handleKeyDown, false);
@@ -56,21 +54,8 @@ export default class RecordDialog extends Component {
         dialogId: dialogId
       }, () => {
         this.loadDialogContext(this.state.projectId, this.state.dialogId);
-        this.loadRecordings(this.state.projectId, this.state.dialogId);
       });
     }
-  }
-
-  loadRecordings(projectId, dialogId) {
-    SarService.getRecordings(projectId, dialogId)
-      .then(r=> {
-        this.setState({
-          recordings: r
-        });
-      })
-      .catch(error => {
-        alert(error.message);
-      });
   }
 
   loadDialogContext(projectId, dialogId) {
@@ -261,7 +246,8 @@ export default class RecordDialog extends Component {
           <Col md={3}>
             <RecordingInstructions />
             <Recordings
-              recordings={this.state.recordings}
+              projectId={this.state.projectId}
+              dialogId={this.state.dialogId}
             />
           </Col>
         </Row>

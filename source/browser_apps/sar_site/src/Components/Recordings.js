@@ -1,11 +1,23 @@
 import React from "react";
 import {Row, Col} from "react-bootstrap";
-import Wave from "./Wave";
+import RecordingPlayer from "./RecordingPlayer";
+import SarService from "../Services/SarService";
 
 export default class Recordings extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      recordings:[]
+    };
+
+    this.loadRecordings = this.loadRecordings.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+  }
+
 
   componentDidMount() {
-
+    this.loadRecordings(this.props.projectId, this.props.dialogId);
   }
 
   componentWillUnmount() {
@@ -13,7 +25,32 @@ export default class Recordings extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.projectId !== this.props.projectId
+        || prevProps.dialogId !== this.props.dialogId) {
+      this.loadRecordings(this.props.projectId, this.props.dialogId);
+    }
+  }
 
+  loadRecordings(projectId, dialogId) {
+    SarService.getRecordings(projectId, dialogId)
+      .then(r=> {
+        this.setState({
+          recordings: r
+        });
+      })
+      .catch(error => {
+        alert(error.message);
+      });
+  }
+
+  handleDelete(item) {
+    SarService.deleteRecording(item.projectId, item.Id)
+      .then(r => {
+
+      })
+      .catch(error => {
+        alert(error.message);
+      });
   }
 
   renderRecordings(recordings) {
@@ -23,10 +60,9 @@ export default class Recordings extends React.Component {
         return (
           <Row key={i}>
             <Col>
-              <Wave
-                sequenceNumber={item.SequenceNumber}
-                projectId= {item.ProjectId}
-                recordingId= { item.Id }
+              <RecordingPlayer
+                recording={item}
+                onDelete={this.handleDelete}
               />
             </Col>
           </Row>
@@ -53,7 +89,7 @@ export default class Recordings extends React.Component {
               <h4>Existing Recordings</h4>
             </Col>
           </Row>
-          { this.renderRecordings(this.props.recordings) }
+          { this.renderRecordings(this.state.recordings) }
         </Col>
       </Row>
     );

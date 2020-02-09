@@ -102,6 +102,11 @@ class SarService {
     return dao.getRecording(projectId, recordingId);
   }
 
+  static deleteRecording(projectId, recordingId) {
+    const dao = new RecordingDao(Environment.BASE_URL);
+    return dao.deleteRecording(projectId, recordingId);
+  }
+
   //Authentication and setup
   static login(username, password) {
     const dao = new AuthDao(Environment.BASE_URL);

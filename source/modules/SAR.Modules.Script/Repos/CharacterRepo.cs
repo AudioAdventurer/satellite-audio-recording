@@ -16,14 +16,14 @@ namespace SAR.Modules.Script.Repos
 
         public IEnumerable<Character> GetByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
+            var q = Query.EQ("ProjectId", projectId);
             return Collection.Find(q);
         }
 
         public void DeleteByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
-            Collection.Delete(q);
+            var q = Query.EQ("ProjectId", projectId);
+            Collection.DeleteMany(q);
         }
     }
 }

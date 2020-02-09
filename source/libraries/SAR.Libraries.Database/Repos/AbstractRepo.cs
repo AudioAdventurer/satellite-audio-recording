@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using LiteDB;
 using SAR.Libraries.Database.Objects;
@@ -9,7 +8,7 @@ namespace SAR.Libraries.Database.Repos
     public abstract class AbstractRepo<T>
         where T:AbstractDbObject
     {
-        protected readonly LiteCollection<T> Collection;
+        protected readonly ILiteCollection<T> Collection;
         private readonly string _collectionName;
 
         protected AbstractRepo(

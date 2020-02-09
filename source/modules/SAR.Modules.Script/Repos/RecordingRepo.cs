@@ -18,37 +18,37 @@ namespace SAR.Modules.Script.Repos
 
         public void DeleteByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
-            Collection.Delete(q);
+            var q = Query.EQ("ProjectId", projectId);
+            Collection.DeleteMany(q);
         }
 
         public void DeleteByCharacterDialog(Guid characterDialogId)
         {
-            Query q = Query.EQ("CharacterDialogId", characterDialogId);
-            Collection.Delete(q);
+            var q = Query.EQ("CharacterDialogId", characterDialogId);
+            Collection.DeleteMany(q);
         }
 
         public void DeleteByPerformer(Guid performerPersonId)
         {
-            Query q = Query.EQ("PerformerPersonId", performerPersonId);
-            Collection.Delete(q);
+            var q = Query.EQ("PerformerPersonId", performerPersonId);
+            Collection.DeleteMany(q);
         }
 
         public IEnumerable<Recording> GetByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
+            var q = Query.EQ("ProjectId", projectId);
             return Collection.Find(q);
         }
 
         public IEnumerable<Recording> GetByCharacterDialog(Guid characterDialogId)
         {
-            Query q = Query.EQ("CharacterDialogId", characterDialogId);
+            var q = Query.EQ("CharacterDialogId", characterDialogId);
             return Collection.Find(q);
         }
 
         public IEnumerable<Recording> GetByPerformer(Guid performerPersonId)
         {
-            Query q = Query.EQ("PerformerPersonId", performerPersonId);
+            var q = Query.EQ("PerformerPersonId", performerPersonId);
             return Collection.Find(q);
         }
     }

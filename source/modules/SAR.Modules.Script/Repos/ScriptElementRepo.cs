@@ -18,7 +18,7 @@ namespace SAR.Modules.Script.Repos
 
         public IEnumerable<ScriptElement> GetByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
+            var q = Query.EQ("ProjectId", projectId);
             var items = Collection.Find(q);
 
             return items.OrderBy(i => i.SequenceNumber);
@@ -26,8 +26,8 @@ namespace SAR.Modules.Script.Repos
 
         public void DeleteByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
-            Collection.Delete(q);
+            var q = Query.EQ("ProjectId", projectId);
+            Collection.DeleteMany(q);
         }
 
         public IEnumerable<ScriptElement> GetByProject(Guid projectId, int? startPosition, int? endPosition)
@@ -44,7 +44,7 @@ namespace SAR.Modules.Script.Repos
                 end = endPosition.Value;
             }
 
-            Query q = Query.And(
+            var q = Query.And(
                 Query.EQ("ProjectId", projectId),
                 Query.GTE("SequenceNumber", start),
                 Query.LTE("SequenceNumber", end));

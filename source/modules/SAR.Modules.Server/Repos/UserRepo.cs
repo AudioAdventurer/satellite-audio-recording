@@ -17,13 +17,13 @@ namespace SAR.Modules.Server.Repos
 
         public User GetByEmail(string email)
         {
-            Query q = Query.EQ("Email", email);
+            var q = Query.EQ("Email", email);
             return Collection.FindOne(q);
         }
 
         public User GetByPerson(Guid personId)
         {
-            Query q = Query.EQ("PersonId", personId);
+            var q = Query.EQ("PersonId", personId);
             return Collection.FindOne(q);
         }
 

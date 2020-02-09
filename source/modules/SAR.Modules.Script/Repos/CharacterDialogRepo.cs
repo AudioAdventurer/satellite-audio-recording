@@ -20,14 +20,14 @@ namespace SAR.Modules.Script.Repos
 
         public IEnumerable<CharacterDialog> GetByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
+            var q = Query.EQ("ProjectId", projectId);
 
             return Collection.Find(q).OrderBy(cd => cd.ScriptSequenceNumber);
         }
 
         public IEnumerable<CharacterDialog> GetByCharacter(Guid characterId)
         {
-            Query q = Query.EQ("CharacterId", characterId);
+            var q = Query.EQ("CharacterId", characterId);
 
             return Collection.Find(q).OrderBy(cd => cd.ScriptSequenceNumber);
         }
@@ -37,12 +37,12 @@ namespace SAR.Modules.Script.Repos
             int currentScriptSequenceNumber,
             int limit = 1)
         {
-            Query q = Query.And(
-                Query.All("ScriptSequenceNumber", Query.Ascending),
-                Query.EQ("CharacterId", characterId),
-                Query.GT("ScriptSequenceNumber", currentScriptSequenceNumber));
-
-            return Collection.Find(q, limit: limit);
+            return Collection.Query()
+                .Where(x => x.CharacterId == characterId
+                            && x.ScriptSequenceNumber > currentScriptSequenceNumber)
+                .OrderBy(x => x.ScriptSequenceNumber)
+                .Limit(limit)
+                .ToEnumerable();
         }
 
         public IEnumerable<CharacterDialog> GetPreviousByCharacter(
@@ -50,18 +50,18 @@ namespace SAR.Modules.Script.Repos
             int currentScriptSequenceNumber,
             int limit = 1)
         {
-            Query q = Query.And(
-                Query.All("ScriptSequenceNumber", Query.Descending),
-                Query.EQ("CharacterId", characterId),
-                Query.LT("ScriptSequenceNumber", currentScriptSequenceNumber));
-
-            return Collection.Find(q, limit: limit);
+            return Collection.Query()
+                .Where(x => x.CharacterId == characterId
+                            && x.ScriptSequenceNumber < currentScriptSequenceNumber)
+                .OrderBy(x => x.ScriptSequenceNumber)
+                .Limit(limit)
+                .ToEnumerable();
         }
 
         public void DeleteByProject(Guid projectId)
         {
-            Query q = Query.EQ("ProjectId", projectId);
-            Collection.Delete(q);
+            var q = Query.EQ("ProjectId", projectId);
+            Collection.DeleteMany(q);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace SAR.Apps.Server.Modules
             builder.Register(c =>
                 {
                     string filename = Path.Combine(_config.DbFolder, "sar.db");
-                    string connect = $"Filename={filename};Mode=Exclusive";
+                    string connect = $"Filename={filename};Connection=direct;Upgrade=true";
                     
                     return new LiteDatabase(connect);
 

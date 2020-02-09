@@ -16,7 +16,7 @@ namespace SAR.Modules.Server.Repos
 
         public PasswordHash GetByUser(Guid userId)
         {
-            Query q = Query.EQ("UserId", userId);
+            var q = Query.EQ("UserId", userId);
             return Collection.FindOne(q);
         }
     }

@@ -754,7 +754,7 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
-        public Stream DeleteRecording(
+        public void DeleteRecording(
             Guid userPersonId,
             Guid projectId,
             Guid recordingId)
@@ -767,11 +767,13 @@ namespace SAR.Apps.Server.Services
                     || IsProjectOwner(userPersonId, projectId))
                 {
                     _scriptService.DeleteRecording(recordingId);
-
+                    _scriptService.ResequenceRecordings(recording.CharacterDialogId);
                 }
             }
-
-            throw new UnauthorizedAccessException();
+            else
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
     }
 }

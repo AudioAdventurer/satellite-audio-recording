@@ -26,6 +26,7 @@ export default class RecordDialog extends Component {
       shouldRecord: false,
       blob: null,
       savingBlob: false,
+      recordingsTimestamp: Date.now(),
       dialog:[],
       recordings:[]
     };
@@ -128,7 +129,8 @@ export default class RecordDialog extends Component {
         SarService.saveRecording(this.state.projectId, this.state.dialogId, data)
           .then(r => {
             this.setState({
-              savingBlob:false
+              savingBlob:false,
+              recordingsTimestamp: Date.now()
             });
           })
           .catch(e=>{
@@ -248,6 +250,7 @@ export default class RecordDialog extends Component {
             <Recordings
               projectId={this.state.projectId}
               dialogId={this.state.dialogId}
+              recordingsTimestamp = {this.state.recordingsTimestamp}
             />
           </Col>
         </Row>

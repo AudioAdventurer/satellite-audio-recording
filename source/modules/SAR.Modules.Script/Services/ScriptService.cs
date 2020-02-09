@@ -210,6 +210,20 @@ namespace SAR.Modules.Script.Services
             _recordingRepo.Delete(recordingId);
         }
 
+        public void ResequenceRecordings(Guid characterDialogId)
+        {
+            var recordings = _recordingRepo.GetByCharacterDialog(characterDialogId).ToList();
+
+            int i = 1;
+            foreach (var recording in recordings)
+            {
+                recording.SequenceNumber = i;
+
+                _recordingRepo.Save(recording);
+                i++;
+            }
+        }
+
         public void DeleteProjectScript(Guid projectId)
         {
             //Delete Elements for the scene

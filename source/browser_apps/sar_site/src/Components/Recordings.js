@@ -26,7 +26,8 @@ export default class Recordings extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.projectId !== this.props.projectId
-        || prevProps.dialogId !== this.props.dialogId) {
+        || prevProps.dialogId !== this.props.dialogId
+        || prevProps.recordingsTimestamp !== this.props.recordingsTimestamp) {
       this.loadRecordings(this.props.projectId, this.props.dialogId);
     }
   }
@@ -44,9 +45,9 @@ export default class Recordings extends React.Component {
   }
 
   handleDelete(item) {
-    SarService.deleteRecording(item.projectId, item.Id)
+    SarService.deleteRecording(item.ProjectId, item.Id)
       .then(r => {
-
+        this.loadRecordings(this.props.projectId, this.props.dialogId);
       })
       .catch(error => {
         alert(error.message);

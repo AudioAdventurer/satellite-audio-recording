@@ -1,64 +1,75 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SAR.Apps.Server.Helpers;
+using SAR.Apps.Server.Objects;
 using SAR.Apps.Server.Services;
 using SAR.Libraries.Common.Interfaces;
-using SAR.Modules.Script.Objects;
+using SAR.Modules.Server.Objects;
 
 namespace SAR.Apps.Server.Controllers
-{
+{    
     [Authorize]
     [Produces("application/json")]
-    public class ProjectController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly ProjectService _projectService;
         private readonly ISarLogger _logger;
 
-        public ProjectController(
+        public UserController(
             ProjectService projectService,
             ISarLogger logger)
         {
             _projectService = projectService;
             _logger = logger;
         }
-
-
+        
         [HttpGet]
-        [Route("api/projects")]
-        public ActionResult<List<Project>> GetProjects()
-        {
-            var response = _projectService.GetProjects(User.GetPersonId());
-            return Ok(response);
-        }
-
-        [HttpGet]
-        [Route("api/projects/{projectId:Guid}")]
-        public ActionResult<Project> GetProject([FromRoute] Guid projectId)
+        [Route("api/users")]
+        public ActionResult<List<UserEdit>> GetUsers()
         {
             var personId = User.GetPersonId();
 
             try
             {
-                var project = _projectService.GetProject(personId, projectId);
-                return Ok(project);
+                var users = _projectService.GetUserEdits(personId);
+                return Ok(users);
             }
             catch (UnauthorizedAccessException)
             {
                 return Unauthorized();
             }
         }
-
+        
         [HttpPost]
-        [Route("api/projects")]
-        public ActionResult SaveProject([FromBody] Project project)
+        [Route("api/users")]
+        public ActionResult CreateUser([FromBody] CreateUserRequest userRequest)
         {
             var personId = User.GetPersonId();
 
             try
             {
-                _projectService.SaveProject(personId, project);
+                _projectService.CreateUser(personId, userRequest);
+                return Ok();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+        }
+        
+        [HttpPost]
+        [Route("api/users/{userId:Guid}")]
+        public ActionResult SetPassword(
+            [FromRoute] Guid userId,
+            [FromBody] SetPasswordRequest setPassword)
+        {
+            var personId = User.GetPersonId();
+
+            try
+            {
+                _projectService.SetPassword(personId, userId, setPassword.NewPassword);
                 return Ok();
             }
             catch (UnauthorizedAccessException)

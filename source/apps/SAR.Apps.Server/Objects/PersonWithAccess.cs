@@ -15,7 +15,6 @@ namespace SAR.Apps.Server.Objects
             this.Id = p.Id;
             this.FamilyName = p.FamilyName;
             this.GivenName = p.GivenName;
-            this.Email = p.Email;
             this.PhoneNumber = p.PhoneNumber;
 
             AccessTypes = new List<string>();

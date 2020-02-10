@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SAR.Apps.Server.Objects;
+using SAR.Libraries.Common.Helpers;
 using SAR.Libraries.Common.Storage;
 using SAR.Libraries.Fountain.Objects;
 using SAR.Modules.Script.Constants;
@@ -10,6 +12,7 @@ using SAR.Modules.Script.Helpers;
 using SAR.Modules.Script.Objects;
 using SAR.Modules.Script.Services;
 using SAR.Modules.Server.Constants;
+using SAR.Modules.Server.Objects;
 using SAR.Modules.Server.Services;
 
 namespace SAR.Apps.Server.Services
@@ -774,6 +777,115 @@ namespace SAR.Apps.Server.Services
             {
                 throw new UnauthorizedAccessException();
             }
+        }
+
+        public void CreateUser(
+            Guid userPersonId,
+            CreateUserRequest userRequest)
+        {
+            var actingUser = _serverService.GetUserByPerson(userPersonId);
+
+            if (IsSystemAdmin(actingUser.Id))
+            {
+                var user = _serverService.GetUserByEmail(userRequest.Email);
+                Person person;
+                
+                if (user == null)
+                {
+                    person = new Person();
+
+                    user = new User
+                    {
+                        Email = userRequest.Email, 
+                        UserType = userRequest.UserType, 
+                        PersonId = person.Id
+                    };
+                    _serverService.Save(user);
+                    
+                    var salt = PasswordHelper.GenerateSalt();
+
+                    PasswordHash ph = new PasswordHash
+                    {
+                        Salt = salt,
+                        UserId = user.Id,
+                        Hash = PasswordHelper.Hash(userRequest.Password, salt)
+                    };
+                    _serverService.Save(ph);
+
+                    person.FamilyName = userRequest.FamilyName;
+                    person.GivenName = userRequest.GivenName;
+                    person.PhoneNumber = userRequest.PhoneNumber;
+                    _scriptService.Save(person);
+                }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException();
+            }
+        }
+
+        public void SetPassword(
+            Guid userPersonId,
+            Guid userId,
+            string newPassword)
+        {
+            var actingUser = _serverService.GetUserByPerson(userPersonId);
+
+            if (IsSystemAdmin(actingUser.Id))
+            {
+                _serverService.SetPassword(userId, newPassword);
+            }
+        }
+
+        public IEnumerable<User> GetUsers(
+            Guid userPersonId)
+        {
+            var actingUser = _serverService.GetUserByPerson(userPersonId);
+
+            if (IsSystemAdmin(actingUser.Id))
+            {
+                return _serverService.GetUsers();
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public IEnumerable<UserEdit> GetUserEdits(
+            Guid userPersonId)
+        {
+            var actingUser = _serverService.GetUserByPerson(userPersonId);
+
+            if (IsSystemAdmin(actingUser.Id))
+            {
+                var users = _serverService.GetUsers();
+
+                List<UserEdit> output = new List<UserEdit>();
+                
+                foreach (var user in users)
+                {
+                    var userEdit = new UserEdit
+                    {
+                        Email = user.Email, 
+                        UserId = user.Id, 
+                        PersonId = user.PersonId, 
+                        UserType = user.UserType
+                    };
+
+                    var person = _scriptService.GetPerson(user.PersonId);
+                    if (person != null)
+                    {
+                        userEdit.FamilyName = person.FamilyName;
+                        userEdit.GivenName = person.GivenName;
+                        userEdit.PhoneNumber = person.PhoneNumber;
+                    }
+
+                    output.Add(userEdit);
+                }
+
+                return output;
+            }
+
+            throw new UnauthorizedAccessException();
         }
     }
 }

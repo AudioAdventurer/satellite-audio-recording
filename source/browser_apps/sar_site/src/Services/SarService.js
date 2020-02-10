@@ -7,6 +7,7 @@ import PersonDao from "../Data/PersonDao";
 import CharacterDao from "../Data/CharacterDao";
 import ScriptDao from "../Data/ScriptDao";
 import RecordingDao from "../Data/RecordingDao";
+import UserDao from "../Data/UserDao";
 
 class SarService {
   static JWT = "";
@@ -107,6 +108,17 @@ class SarService {
     return dao.deleteRecording(projectId, recordingId);
   }
 
+  //Users
+  static getUsers() {
+    const dao = new UserDao(Environment.BASE_URL);
+    return dao.getUsers();
+  }
+
+  static createUser(newUser) {
+    const dao = new UserDao(Environment.BASE_URL);
+    dao.createUser(newUser);
+  }
+
   //Authentication and setup
   static login(username, password) {
     const dao = new AuthDao(Environment.BASE_URL);
@@ -117,6 +129,31 @@ class SarService {
     const dao = new SetupDao(Environment.BASE_URL);
     return dao.isSetup();
   }
+
+  static isAdmin() {
+    if (this.UserProperties === null) {
+      return false;
+    }
+
+    return this.UserProperties.role === 'Admin';
+  }
+
+  static isOwner() {
+    if (this.UserProperties === null) {
+      return false;
+    }
+
+    return this.UserProperties.role === 'Owner';
+  }
+
+  static isContributor() {
+    if (this.UserProperties === null) {
+      return false;
+    }
+
+    return this.UserProperties.role === 'Contributor';
+  }
+
 
   static setupService(email, password, givenName, familyName, projectName) {
     const dao = new SetupDao(Environment.BASE_URL);

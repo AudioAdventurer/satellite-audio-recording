@@ -26,6 +26,20 @@ export default class App extends Component {
     this.userHasAuthenticated(false);
   };
 
+  renderUsers(){
+    if (SarService.isAdmin()
+        || SarService.isOwner())
+    {
+      return (
+        <Nav.Item>
+          <LinkContainer to="/users">
+            <Nav.Link>Users</Nav.Link>
+          </LinkContainer>
+        </Nav.Item>
+      );
+    }
+  }
+
   renderLoggedInNavBar() {
     return(
       <Navbar.Collapse id="basic-navbar-nav">
@@ -35,6 +49,7 @@ export default class App extends Component {
               <Nav.Link>Projects</Nav.Link>
             </LinkContainer>
           </Nav.Item>
+          {this.renderUsers()}
         </Nav>
         <Nav >
           <Nav.Item onClick={this.handleLogout}>Logout</Nav.Item>

@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using SAR.Libraries.Common.Helpers;
 using SAR.Modules.Server.Objects;
 using SAR.Modules.Server.Repos;
@@ -32,6 +33,11 @@ namespace SAR.Modules.Server.Services
         {
             var user = _userRepo.GetById(userId);
             return user;
+        }
+
+        public IEnumerable<User> GetUsers()
+        {
+            return _userRepo.GetAll();
         }
 
         public User GetUserByPerson(Guid personId)
@@ -92,6 +98,21 @@ namespace SAR.Modules.Server.Services
         public void Save(User user)
         {
             _userRepo.Save(user);
+        }
+
+        public void SetPassword(Guid userId, string password)
+        {
+            var passwordHash = _passwordHashRepo.GetByUser(userId);
+
+            if (passwordHash != null)
+            {
+                passwordHash = new PasswordHash();
+            }
+
+            passwordHash.Salt = PasswordHelper.GenerateSalt();
+            passwordHash.Hash = PasswordHelper.Hash(password, passwordHash.Salt);
+
+            _passwordHashRepo.Save(passwordHash);
         }
 
         public void Save(PasswordHash passwordHash)

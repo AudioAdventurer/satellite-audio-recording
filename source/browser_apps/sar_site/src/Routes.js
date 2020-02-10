@@ -14,6 +14,8 @@ import Participants from "./Containers/Participants";
 import Projects from "./Containers/Projects";
 import Project from "./Containers/Project";
 import RecordDialog from "./Containers/RecordDialog";
+import User from "./Containers/User"
+import Users from "./Containers/Users";
 import NotFound from "./Containers/NotFound";
 
 export default ({ childProps }) =>
@@ -29,6 +31,8 @@ export default ({ childProps }) =>
     <AuthenticatedRoute path="/projects/:projectId/participants" exact component={Participants} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/participants/:participantId" exact component={Participant} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/dialog/:dialogId/record" exact component={RecordDialog} props={childProps} />
+    <AuthenticatedRoute path="/users/:userId" exact component={User} props={childProps} />
+    <AuthenticatedRoute path="/users" exact component={Users} props={childProps} />
     { /* Finally, catch all unmatched routes */ }
     <Route component={NotFound} />
   </Switch>;

@@ -1,36 +1,37 @@
-import "./Participant.css";
+import "./User.css";
 import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Form, Button} from "react-bootstrap";
 import { Link, Redirect } from 'react-router-dom'
 import uuid from 'uuid';
 
-export default class Participant extends Component {
+export default class User extends Component {
   constructor(props) {
     super(props);
 
-    let personId = this.props.match.params.participantId;
-    let projectId = this.props.match.params.projectId;
+    let userId = this.props.match.params.userId;
 
     this.state = {
       redirect:false,
-      projectId:projectId,
-      personId:personId,
+      userId:userId,
+      email:"",
+      userType:"",
       givenName:"",
       familyName:"",
-      email:"",
       phoneNumber:"",
-      accessTypes:[]
     };
 
-    if (personId !== 'new') {
-      this.loadPerson(projectId, personId);
+    this.loadUser = this.loadUser.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.state.userId !== 'new') {
+      this.loadUser(this.state.userId);
     }
   }
 
-
-  loadPerson(projectId, personId) {
-    SarService.getParticipant(projectId, personId)
+  loadUser(userId) {
+    SarService.getUserEdit(userId)
       .then(r => {
         this.setState({
           givenName: r.GivenName ?? '',

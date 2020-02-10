@@ -13,16 +13,18 @@ export default class Participants extends Component {
 
     this.state = {
       projectId: projectId,
-      projectTitle:"",
+      projectTitle: "",
       project:{},
       participants:[]
     };
 
     this.loadParticipants = this.loadParticipants.bind(this);
     this.loadProject = this.loadProject.bind(this);
+  }
 
-    this.loadProject(projectId);
-    this.loadParticipants(projectId);
+  componentDidMount() {
+    this.loadProject(this.state.projectId);
+    this.loadParticipants(this.state.projectId);
   }
 
   loadProject(projectId) {

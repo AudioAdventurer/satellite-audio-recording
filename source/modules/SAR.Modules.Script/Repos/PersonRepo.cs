@@ -14,12 +14,11 @@ namespace SAR.Modules.Script.Repos
         {
         }
 
-        public IEnumerable<Person> GetAll()
+        public new IEnumerable<Person> GetAll()
         {
             return Collection.FindAll()
                 .OrderBy(p => p.FamilyName)
                 .ThenBy(p => p.GivenName);
         }
-        
     }
 }

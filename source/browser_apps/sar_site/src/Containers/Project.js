@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Form, Button, Tabs, Tab} from "react-bootstrap";
 import LoaderButton from "../Components/LoaderButton";
+import {toast} from "react-toastify";
 
 export default class Project extends Component {
   constructor(props) {
@@ -17,8 +18,10 @@ export default class Project extends Component {
       selectedFile:"",
       importingScript:false
     };
+  }
 
-    this.loadData(projectId);
+  componentDidMount() {
+    this.loadData(this.state.projectId);
   }
 
   loadData(projectId) {
@@ -32,7 +35,7 @@ export default class Project extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -48,13 +51,13 @@ export default class Project extends Component {
 
       SarService.saveProject(proj)
         .then(r => {
-          alert("Saved");
+          toast.info("Saved");
         })
         .catch(e =>{
-          alert(e.message);
+          toast.error(e.message);
         })
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message);
     }
   };
 
@@ -89,10 +92,10 @@ export default class Project extends Component {
         this.setState({
           importingScript:false
         });
-        alert("Script Loaded");
+        toast.info("Script Loaded");
       })
       .catch(e=>{
-        alert(e.message);
+        toast.error(e.message);
         this.setState({
           importingScript:false
         });

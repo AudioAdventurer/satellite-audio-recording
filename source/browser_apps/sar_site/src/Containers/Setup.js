@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Form, Button} from "react-bootstrap";
 import { Redirect } from 'react-router-dom'
+import {toast} from "react-toastify";
 
 export default class Setup extends Component {
   constructor(props) {
@@ -17,7 +18,9 @@ export default class Setup extends Component {
       ownerFamilyName:"",
       initialProjectName:""
     };
+  }
 
+  componentDidMount() {
     SarService.isSetup()
       .then(r => {
         if (r.IsSetup) {
@@ -30,8 +33,8 @@ export default class Setup extends Component {
           });
         }
       }).catch(e => {
-        alert(e.message);
-      });
+      toast.error(e.message);
+    });
   }
 
   handleChange = event => {
@@ -59,10 +62,10 @@ export default class Setup extends Component {
           }
         })
         .catch(e =>{
-          alert(e.message);
+          toast.error(e.message);
         })
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message);
     }
   };
 

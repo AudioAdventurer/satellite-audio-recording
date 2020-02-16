@@ -4,6 +4,7 @@ import SarService from "../Services/SarService";
 import {Row, Col, Table} from "react-bootstrap";
 import { Link } from 'react-router-dom'
 import { FaPlusCircle } from "react-icons/fa";
+import {toast} from "react-toastify";
 
 export default class Projects extends Component {
   constructor(props) {
@@ -12,8 +13,10 @@ export default class Projects extends Component {
     this.state = {
       projects:[]
     };
+  }
 
-    this.loadData()
+  componentDidMount() {
+    this.loadData();
   }
 
   loadData() {
@@ -24,7 +27,7 @@ export default class Projects extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 

@@ -8,6 +8,7 @@ import FocusDialogViewer from "../Components/FocusDialogViewer";
 import Recorder from "../Components/Recorder";
 import RecordingInstructions from "../Components/RecordingInstructions";
 import Recordings from "../Components/Recordings";
+import {toast} from "react-toastify";
 
 export default class RecordDialog extends Component {
   constructor(props) {
@@ -85,7 +86,7 @@ export default class RecordDialog extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -134,7 +135,7 @@ export default class RecordDialog extends Component {
             });
           })
           .catch(e=>{
-            alert(e.message);
+            toast.error(e.message);
             this.setState({
               savingBlob:false
             });

@@ -42,15 +42,33 @@ namespace SAR.Apps.Server.Controllers
             }
         }
         
+        [HttpGet]
+        [Route("api/users/{userId:Guid}")]
+        public ActionResult<UserEdit> GetUser(
+            [FromRoute] Guid userId)
+        {
+            var userPersonId = User.GetPersonId();
+            
+            try
+            {
+                var user = _projectService.GetUserEdit(userId, userPersonId);
+                return Ok(user);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+        }
+        
         [HttpPost]
         [Route("api/users")]
-        public ActionResult CreateUser([FromBody] CreateUserRequest userRequest)
+        public ActionResult SaveUser([FromBody] UserEdit user)
         {
             var personId = User.GetPersonId();
 
             try
             {
-                _projectService.CreateUser(personId, userRequest);
+                _projectService.SaveUser(personId, user);
                 return Ok();
             }
             catch (UnauthorizedAccessException)
@@ -60,7 +78,7 @@ namespace SAR.Apps.Server.Controllers
         }
         
         [HttpPost]
-        [Route("api/users/{userId:Guid}")]
+        [Route("api/users/{userId:Guid}/password")]
         public ActionResult SetPassword(
             [FromRoute] Guid userId,
             [FromBody] SetPasswordRequest setPassword)

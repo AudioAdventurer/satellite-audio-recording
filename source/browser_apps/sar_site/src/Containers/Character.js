@@ -4,6 +4,7 @@ import SarService from "../Services/SarService";
 import {Row, Col, Form, Button} from "react-bootstrap";
 import { Link, Redirect } from 'react-router-dom'
 import uuid from 'uuid';
+import {toast} from "react-toastify";
 
 export default class Character extends Component {
   constructor(props) {
@@ -27,14 +28,16 @@ export default class Character extends Component {
     this.loadProject = this.loadProject.bind(this);
     this.loadCharacter = this.loadCharacter.bind(this);
     this.loadParticipants = this.loadParticipants.bind(this);
+  }
 
-    this.loadProject(projectId);;
+  componentDidMount() {
+    this.loadProject(this.state.projectId);
 
-    if (characterId !== 'new'){
-      this.loadCharacter(projectId, characterId);
+    if (this.state.characterId !== 'new'){
+      this.loadCharacter(this.state.projectId, this.state.characterId);
     }
 
-    this.loadParticipants(projectId);
+    this.loadParticipants(this.state.projectId);
   }
 
   loadParticipants(projectId) {
@@ -45,7 +48,7 @@ export default class Character extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -58,7 +61,7 @@ export default class Character extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -77,7 +80,7 @@ export default class Character extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 

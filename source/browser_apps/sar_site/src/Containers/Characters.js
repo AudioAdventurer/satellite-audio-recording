@@ -4,6 +4,7 @@ import SarService from "../Services/SarService";
 import {Row, Col, Table} from "react-bootstrap";
 import { FaPlusCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom'
+import {toast} from "react-toastify";
 
 export default class Characters extends Component {
   constructor(props) {
@@ -17,9 +18,11 @@ export default class Characters extends Component {
       project:{},
       characters:[]
     };
+  }
 
-    this.loadProject(projectId);
-    this.loadCharacters(projectId);
+  componentDidMount() {
+    this.loadProject(this.state.projectId);
+    this.loadCharacters(this.state.projectId);
   }
 
   loadProject(projectId) {
@@ -31,7 +34,7 @@ export default class Characters extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -43,7 +46,7 @@ export default class Characters extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 

@@ -4,6 +4,7 @@ import SarService from "../Services/SarService";
 import {Row, Col, Form, Button} from "react-bootstrap";
 import { Link, Redirect } from 'react-router-dom'
 import uuid from 'uuid';
+import {toast} from "react-toastify";
 
 export default class User extends Component {
   constructor(props) {
@@ -12,13 +13,16 @@ export default class User extends Component {
     let userId = this.props.match.params.userId;
 
     this.state = {
-      redirect:false,
-      userId:userId,
-      email:"",
-      userType:"",
-      givenName:"",
-      familyName:"",
-      phoneNumber:"",
+      redirect: false,
+      userId: userId,
+      personId:"",
+      email: "",
+      userType: "Contributor",
+      givenName: "",
+      familyName: "",
+      phoneNumber: "",
+      password: "",
+      userTypes: [ "Owner", "Admin", "Contributor" ]
     };
 
     this.loadUser = this.loadUser.bind(this);
@@ -31,18 +35,19 @@ export default class User extends Component {
   }
 
   loadUser(userId) {
-    SarService.getUserEdit(userId)
+    SarService.getUser(userId)
       .then(r => {
         this.setState({
+          personId: r.PersonId,
           givenName: r.GivenName ?? '',
           familyName: r.FamilyName ?? '',
           email: r.Email ?? '',
           phoneNumber: r.PhoneNumber ?? '',
-          accessTypes: r.AccessTypes ?? []
+          userType: r.UserType ?? "Contributor"
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -54,7 +59,7 @@ export default class User extends Component {
 
   renderRedirect = () => {
     if (this.state.redirect) {
-      return <Redirect to={`/projects/${this.state.projectId}/participants`} />
+      return <Redirect to={`/users`} />
     }
   };
 
@@ -62,12 +67,15 @@ export default class User extends Component {
     event.preventDefault();
 
     try {
-      let personId = this.state.characterId;
-      if (personId==='new'){
-        personId = uuid.v4();
+      let userId = this.state.userId;
+      if (userId==='new'){
+        userId = uuid.v4();
       }
 
-      let projectId = this.state.projectId;
+      let personId = this.state.personId;
+      if (personId === '') {
+        personId = uuid.v4();
+      }
 
       let givenName = this.state.givenName;
 
@@ -86,58 +94,87 @@ export default class User extends Component {
         email = null;
       }
 
-      let accessTypes = this.state.accessTypes;
+      let userType = this.state.userType;
 
-      let person = {
-        Id: personId,
-        ProjectId: projectId,
+      let user = {
+        UserId: userId,
+        PersonId: personId,
         GivenName: givenName,
         FamilyName: familyName,
         PhoneNumber: phoneNumber,
         Email: email,
-        AccessTypes: accessTypes
+        UserType: userType
       };
 
-      SarService.saveParticipantWithAccess(person)
+      SarService.saveUser(user)
         .then(r => {
-          this.setState({
-            redirect: true
-          });
+          if (this.state.password !== '') {
+            let spr = {
+              NewPassword: this.state.password
+            };
+
+            SarService.setPassword(userId, spr)
+              .then(r2 => {
+                this.setState({
+                  redirect: true
+                });
+              })
+              .catch(e => {
+                toast.error(e.message);
+              })
+          } else {
+            this.setState({
+              redirect: true
+            });
+          }
         })
-        .catch(e =>{
-          alert(e.message);
+        .catch(e => {
+          toast.error(e.message);
         })
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message);
     }
   };
 
-  renderSelect(){
+  renderSelect() {
     return(
-      <Form.Control as="select"
-                    multiple
-                    value={this.state.accessTypes}
-                    onChange={this.handleChange}>
-        <option value="performer">Performer</option>
-        <option value="audio">Audio Engineer</option>
-        <option value="director">Director</option>
-        <option value="producer">Producer</option>
-        <option value="writer">Writer</option>
-        <option value="owner">Owner</option>
-      </Form.Control>);
+      <Form.Group controlId="userType">
+        <Form.Control as="select"
+                      value={this.state.userType}
+                      onChange={this.handleChange} >
+          <option value="Contributor">Contributor</option>
+          <option value="Admin">Admin</option>
+          <option value="Owner">Owner</option>
+        </Form.Control>
+      </Form.Group>);
+  }
+
+  renderPassword() {
+    if (this.state.userId === 'new'){
+      return (
+        <Form.Group controlId="password">
+          <Form.Label>User Password</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter users's initial password"
+            value={this.state.password}
+            onChange={this.handleChange}
+          />
+        </Form.Group>);
+    }
   }
 
   render() {
     return (
-      <div className="Character">
+      <div className="User">
         {this.renderRedirect()}
         <Row>
           <Col>
-            <h3>Participant: {`${this.state.givenName} ${this.state.familyName}`.trim()}</h3>
+            <h3>User: {`${this.state.givenName} ${this.state.familyName}`.trim()}</h3>
           </Col>
           <Col>
             <div className="float-md-right">
-              <Link to={`/projects/${this.state.projectId}/participants`}>Return to Participants</Link>
+              <Link to={`/users`}>Return to Users</Link>
             </div>
           </Col>
         </Row>
@@ -148,7 +185,7 @@ export default class User extends Component {
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Enter participant given name"
+                  placeholder="Enter user given name"
                   value={this.state.givenName}
                   onChange={this.handleChange}
                 />
@@ -157,7 +194,7 @@ export default class User extends Component {
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Enter participant family name"
+                  placeholder="Enter user family name"
                   value={this.state.familyName}
                   onChange={this.handleChange}
                 />
@@ -166,7 +203,7 @@ export default class User extends Component {
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Enter participant's email address"
+                  placeholder="Enter user's email address"
                   value={this.state.email}
                   onChange={this.handleChange}
                 />
@@ -175,14 +212,15 @@ export default class User extends Component {
                 <Form.Label>Phone Number</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Enter participant's phone number"
+                  placeholder="Enter users's phone number"
                   value={this.state.phoneNumber}
                   onChange={this.handleChange}
                 />
               </Form.Group>
-              <Form.Group controlId="accessTypes">
-                <Form.Label>Project Access</Form.Label>
-                {this.renderSelect(this.state.accessTypes)}
+              { this.renderPassword() }
+              <Form.Group controlId="userTypes">
+                <Form.Label>User Type</Form.Label>
+                {this.renderSelect(this.state.userTypes)}
               </Form.Group>
               <Button variant="primary" type="submit">
                 Save

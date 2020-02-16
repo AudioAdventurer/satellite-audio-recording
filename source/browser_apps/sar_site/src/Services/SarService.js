@@ -114,9 +114,19 @@ class SarService {
     return dao.getUsers();
   }
 
-  static createUser(newUser) {
+  static getUser(userId) {
     const dao = new UserDao(Environment.BASE_URL);
-    dao.createUser(newUser);
+    return dao.getUser(userId);
+  }
+
+  static saveUser(user) {
+    const dao = new UserDao(Environment.BASE_URL);
+    return dao.saveUser(user);
+  }
+
+  static setPassword(userId, setPasswordRequest) {
+    const dao = new UserDao(Environment.BASE_URL);
+    return dao.setPassword(userId, setPasswordRequest);
   }
 
   //Authentication and setup

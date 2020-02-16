@@ -1,9 +1,10 @@
-import "./Participants.css";
+import "./Users.css";
 import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Table} from "react-bootstrap";
 import { FaPlusCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom'
+import {toast} from "react-toastify";
 
 export default class Users extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ export default class Users extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -39,12 +40,16 @@ export default class Users extends Component {
       let rows =  list.map((item, i) => {
         let url = `/users/${item.UserId}`;
         let name = `${item.GivenName} ${item.FamilyName}`.trim();
+        let email = item.Email;
+        if (email === null) {
+          email = 'Email Undefined';
+        }
 
         return (
           <tr key={item.UserId}>
             <td>
               <Link to={url}>
-                {item.Email}
+                {email}
               </Link>
             </td>
             <td>{name}</td>

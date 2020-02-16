@@ -5,6 +5,8 @@ import Routes from "./Routes";
 import { LinkContainer } from "react-router-bootstrap";
 import SarService from "./Services/SarService";
 import {Nav, Navbar} from "react-bootstrap";
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class App extends Component {
   constructor(props) {
@@ -93,6 +95,11 @@ export default class App extends Component {
 
     return (
       <div className="App container">
+        <ToastContainer 
+          position="top-center" 
+          autoClose={false} 
+          closeOnClick 
+        />
         { this.renderNavbar() }
         <Routes childProps={childProps} />
       </div>

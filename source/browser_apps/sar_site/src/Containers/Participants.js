@@ -4,6 +4,7 @@ import SarService from "../Services/SarService";
 import {Row, Col, Table} from "react-bootstrap";
 import { FaPlusCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom'
+import {toast} from "react-toastify";
 
 export default class Participants extends Component {
   constructor(props) {
@@ -36,7 +37,7 @@ export default class Participants extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -48,7 +49,7 @@ export default class Participants extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 

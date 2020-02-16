@@ -55,7 +55,7 @@ namespace SAR.Modules.Script.Repos
             return Collection.Query()
                 .Where(x => x.CharacterId == characterId
                             && x.ScriptSequenceNumber < currentScriptSequenceNumber)
-                .OrderBy(x => x.ScriptSequenceNumber)
+                .OrderByDescending(x => x.ScriptSequenceNumber)
                 .Limit(limit)
                 .ToEnumerable();
         }

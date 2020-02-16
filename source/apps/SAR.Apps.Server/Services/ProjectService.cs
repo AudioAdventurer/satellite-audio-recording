@@ -779,44 +779,42 @@ namespace SAR.Apps.Server.Services
             }
         }
 
-        public void CreateUser(
+        public void SaveUser(
             Guid userPersonId,
-            CreateUserRequest userRequest)
+            UserEdit userEdit)
         {
             var actingUser = _serverService.GetUserByPerson(userPersonId);
 
             if (IsSystemAdmin(actingUser.Id))
             {
-                var user = _serverService.GetUserByEmail(userRequest.Email);
-                Person person;
-                
+                var user = _serverService.GetUser(userEdit.UserId);
+
                 if (user == null)
                 {
-                    person = new Person();
-
                     user = new User
                     {
-                        Email = userRequest.Email, 
-                        UserType = userRequest.UserType, 
-                        PersonId = person.Id
+                        Id = userEdit.UserId,
+                        PersonId = userEdit.PersonId
                     };
-                    _serverService.Save(user);
-                    
-                    var salt = PasswordHelper.GenerateSalt();
-
-                    PasswordHash ph = new PasswordHash
-                    {
-                        Salt = salt,
-                        UserId = user.Id,
-                        Hash = PasswordHelper.Hash(userRequest.Password, salt)
-                    };
-                    _serverService.Save(ph);
-
-                    person.FamilyName = userRequest.FamilyName;
-                    person.GivenName = userRequest.GivenName;
-                    person.PhoneNumber = userRequest.PhoneNumber;
-                    _scriptService.Save(person);
                 }
+
+                user.UserType = userEdit.UserType;
+                user.Email = userEdit.Email;
+                _serverService.Save(user);
+
+                var person = _scriptService.GetPerson(userEdit.PersonId);
+                if (person == null)
+                {
+                    person = new Person
+                    {
+                        Id = userEdit.PersonId
+                    };
+                }
+                
+                person.FamilyName = userEdit.FamilyName;
+                person.GivenName = userEdit.GivenName;
+                person.PhoneNumber = userEdit.PhoneNumber;
+                _scriptService.Save(person);
             }
             else
             {
@@ -883,6 +881,37 @@ namespace SAR.Apps.Server.Services
                 }
 
                 return output;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+        
+        public UserEdit GetUserEdit(
+            Guid userId,
+            Guid userPersonId)
+        {
+            var actingUser = _serverService.GetUserByPerson(userPersonId);
+
+            if (IsSystemAdmin(actingUser.Id))
+            {
+                var user = _serverService.GetUser(userId);
+                var userEdit = new UserEdit
+                {
+                    Email = user.Email, 
+                    UserId = user.Id, 
+                    PersonId = user.PersonId, 
+                    UserType = user.UserType
+                };
+
+                var person = _scriptService.GetPerson(user.PersonId);
+                if (person != null)
+                {
+                    userEdit.FamilyName = person.FamilyName;
+                    userEdit.GivenName = person.GivenName;
+                    userEdit.PhoneNumber = person.PhoneNumber;
+                }
+
+                return userEdit;
             }
 
             throw new UnauthorizedAccessException();

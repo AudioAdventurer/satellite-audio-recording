@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Table} from "react-bootstrap";
 import { Link } from 'react-router-dom'
+import {toast} from "react-toastify";
 
 export default class CharacterLines extends Component {
   constructor(props) {
@@ -20,7 +21,8 @@ export default class CharacterLines extends Component {
       character:{},
       minSequenceNumber:0,
       maxSequenceNumber:0,
-      limit:limit
+      limit:limit,
+      start:start,
     };
 
     this.loadCharacter = this.loadCharacter.bind(this);
@@ -28,9 +30,11 @@ export default class CharacterLines extends Component {
     this.getPreviousScriptLines = this.getPreviousScriptLines.bind(this);
     this.getNextScriptLines = this.getNextScriptLines.bind(this);
     this.setMinMax = this.setMinMax.bind(this);
+  }
 
-    this.loadCharacter(projectId, characterId);
-    this.loadCharacterLines(projectId, characterId, start, limit);
+  componentDidMount() {
+    this.loadCharacter(this.state.projectId, this.state.characterId);
+    this.loadCharacterLines(this.state.projectId, this.state.characterId, this.state.start, this.state.limit);
   }
 
   loadCharacter(projectId, characterId) {
@@ -42,7 +46,7 @@ export default class CharacterLines extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -56,7 +60,7 @@ export default class CharacterLines extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -99,7 +103,7 @@ export default class CharacterLines extends Component {
           });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -118,7 +122,7 @@ export default class CharacterLines extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 

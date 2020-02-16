@@ -4,6 +4,7 @@ import SarService from "../Services/SarService";
 import {Row, Col, Form, Button} from "react-bootstrap";
 import { Link, Redirect } from 'react-router-dom'
 import uuid from 'uuid';
+import {toast} from "react-toastify";
 
 export default class Participant extends Component {
   constructor(props) {
@@ -23,11 +24,14 @@ export default class Participant extends Component {
       accessTypes:[]
     };
 
-    if (personId !== 'new') {
-      this.loadPerson(projectId, personId);
-    }
+    this.loadPerson = this.loadPerson.bind(this);
   }
 
+  componentDidMount() {
+    if (this.state.personId !== 'new') {
+      this.loadPerson(this.state.projectId, this.state.personId);
+    }
+  }
 
   loadPerson(projectId, personId) {
     SarService.getParticipant(projectId, personId)
@@ -41,7 +45,7 @@ export default class Participant extends Component {
         });
       })
       .catch(e => {
-        alert(e.message);
+        toast.error(e.message);
       });
   }
 
@@ -104,10 +108,10 @@ export default class Participant extends Component {
           });
         })
         .catch(e =>{
-          alert(e.message);
+          toast.error(e.message);
         })
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message);
     }
   };
 

@@ -6,7 +6,6 @@ using SAR.Apps.Server.Helpers;
 using SAR.Apps.Server.Objects;
 using SAR.Apps.Server.Services;
 using SAR.Libraries.Common.Interfaces;
-using SAR.Modules.Server.Objects;
 
 namespace SAR.Apps.Server.Controllers
 {    

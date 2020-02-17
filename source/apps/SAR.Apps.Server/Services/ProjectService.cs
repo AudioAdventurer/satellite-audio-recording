@@ -829,10 +829,14 @@ namespace SAR.Apps.Server.Services
         {
             var actingUser = _serverService.GetUserByPerson(userPersonId);
 
-            if (IsSystemAdmin(actingUser.Id))
+            if (IsSystemAdmin(actingUser.Id)
+                || userId == actingUser.Id)
             {
                 _serverService.SetPassword(userId, newPassword);
+                return;
             }
+            
+            throw new UnauthorizedAccessException();
         }
 
         public IEnumerable<User> GetUsers(

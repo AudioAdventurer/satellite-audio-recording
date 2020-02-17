@@ -34,6 +34,29 @@ export default class Users extends Component {
       });
   }
 
+  renderTableHeader() {
+    if (SarService.isAdmin()
+        || SarService.isOwner()) {
+      return (
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Access</th>
+            <th>Action</th>
+          </tr>
+        </thead>);
+    }
+    return (
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Name</th>
+          <th>Access</th>
+        </tr>
+      </thead>);
+  }
+
   renderTableBody(list) {
     if (list != null
       && list.length > 0) {
@@ -45,17 +68,35 @@ export default class Users extends Component {
           email = 'Email Undefined';
         }
 
-        return (
-          <tr key={item.UserId}>
-            <td>
-              <Link to={url}>
-                {email}
-              </Link>
-            </td>
-            <td>{name}</td>
-            <td>{item.UserType}</td>
-          </tr>
-        );
+        if (SarService.isAdmin()
+          || SarService.isOwner()) {
+          return (
+            <tr key={item.UserId}>
+              <td>
+                <Link to={url}>
+                  {email}
+                </Link>
+              </td>
+              <td>{name}</td>
+              <td>{item.UserType}</td>
+              <td>
+                <Link to={`/users/setpassword/${item.UserId}`}>
+                  Set Password
+                </Link>
+              </td>
+            </tr>);
+        } else {
+          return (
+            <tr key={item.UserId}>
+              <td>
+                <Link to={url}>
+                  {email}
+                </Link>
+              </td>
+              <td>{name}</td>
+              <td>{item.UserType}</td>
+            </tr>);
+        }
       });
 
       return (
@@ -86,13 +127,7 @@ export default class Users extends Component {
         <Row>
           <Col>
             <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Name</th>
-                  <th>Access</th>
-                </tr>
-              </thead>
+              { this.renderTableHeader() }
               { this.renderTableBody(this.state.users) }
             </Table>
           </Col>

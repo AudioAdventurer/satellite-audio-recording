@@ -104,7 +104,7 @@ namespace SAR.Modules.Server.Services
         {
             var passwordHash = _passwordHashRepo.GetByUser(userId);
 
-            if (passwordHash != null)
+            if (passwordHash == null)
             {
                 passwordHash = new PasswordHash();
             }

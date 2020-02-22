@@ -12,7 +12,7 @@ export default class Project extends Component {
     let projectId = this.props.match.params.projectId;
 
     this.state = {
-      id: projectId,
+      projectId: projectId,
       projectTitle: "",
       description: "",
       selectedFile:"",
@@ -44,7 +44,7 @@ export default class Project extends Component {
 
     try {
       let proj = {
-        "Id": this.state.id,
+        "Id": this.state.projectId,
         "Title": this.state.projectTitle,
         "Description": this.state.description,
       };
@@ -87,7 +87,7 @@ export default class Project extends Component {
     let data = new FormData();
     data.append('file', this.state.selectedFile);
 
-    SarService.importFountain(this.state.id, data)
+    SarService.importFountain(this.state.projectId, data)
       .then(r=>{
         this.setState({
           importingScript:false

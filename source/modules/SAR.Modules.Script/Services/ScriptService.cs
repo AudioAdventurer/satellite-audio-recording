@@ -68,6 +68,16 @@ namespace SAR.Modules.Script.Services
             return projects.Values.ToList();
         }
 
+        public IEnumerable<ProjectAccess> GetAccessRights(Guid personId)
+        {
+            Dictionary<Guid, ProjectAccess> projectAccesses =
+                _projectAccessRepo
+                    .GetByPerson(personId)
+                    .ToDictionary(pa => pa.ProjectId);
+
+            return projectAccesses.Values.ToList();
+        }
+
         public bool HasAccessToProject(Guid personId, Guid projectId)
         {
             var access = _projectAccessRepo.Get(personId, projectId);
@@ -94,7 +104,7 @@ namespace SAR.Modules.Script.Services
         {
             return _projectAccessRepo.GetByProject(projectId);
         }
-
+        
         public void Save(Project project)
         {
             _projectRepo.Save(project);

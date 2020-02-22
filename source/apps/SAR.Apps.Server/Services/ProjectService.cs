@@ -168,12 +168,27 @@ namespace SAR.Apps.Server.Services
         {
             if (HasAccessToProject(userPersonId, projectId))
             {
+                var access = _scriptService.GetProjectAccess(userPersonId, projectId);
+                
+                bool onlyOwn = access.AccessTypes.Count == 1
+                               && access.AccessTypes.Contains(AccessTypes.Performer);
+
                 var output = new List<UICharacter>();
 
                 var characters = _scriptService.GetCharactersByProject(projectId);
                 foreach (var character in characters)
                 {
-                    output.Add(BuildUICharacter(character));
+                    if (onlyOwn)
+                    {
+                        if (character.PerformerPersonId == userPersonId)
+                        {
+                            output.Add(BuildUICharacter(character));
+                        }                        
+                    }
+                    else
+                    {
+                        output.Add(BuildUICharacter(character));    
+                    }
                 }
 
                 return output;
@@ -216,7 +231,40 @@ namespace SAR.Apps.Server.Services
 
             throw new UnauthorizedAccessException();
         }
+        
+        /// <summary>
+        /// Returns a list of people not currently associated with the project
+        /// </summary>
+        /// <param name="userPersonId"></param>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        public IEnumerable<Person> GetAvailablePeople(Guid userPersonId, Guid projectId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var currentPeople = GetPeople(userPersonId, projectId)
+                    .ToDictionary(p=> p.Id);
 
+                var output = new Dictionary<Guid, Person>();
+                
+                var allPeople = _serverService.GetUsers();
+                foreach (var user in allPeople)
+                {
+                    if (!currentPeople.ContainsKey(user.PersonId)
+                        && !output.ContainsKey(user.PersonId)) //Shouldn't be the case, but just to be safe
+                    {
+                        var person = _scriptService.GetPerson(user.PersonId);
+                        output.Add(person.Id, person);
+                    }
+                }
+
+                return output.Values.ToList();
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+        
         public Person GetPerson(Guid userPersonId, Guid projectId, Guid personId)
         {
             if (HasAccessToProject(userPersonId, projectId))
@@ -236,7 +284,49 @@ namespace SAR.Apps.Server.Services
 
             throw new UnauthorizedAccessException();
         }
+        
+        public Person GetPerson(Guid userId, Guid personId)
+        {
+            if (IsSystemOwner(userId)
+                || IsSystemAdmin(userId))
+            {
+                var person = _scriptService.GetPerson(personId);
+                return person;
+            }
 
+            throw new UnauthorizedAccessException();
+        }
+
+        public Person GetPerson(Guid userPersonId)
+        {
+            return _scriptService.GetPerson(userPersonId);
+        }
+        
+        public IEnumerable<ProjectAccess> GetAccessRights(Guid userPersonId)
+        {
+            return _scriptService.GetAccessRights(userPersonId);
+        }
+
+        public void SaveProfile(
+            Guid userPersonId,
+            Profile profile)
+        {
+            if (userPersonId == profile.PersonId)
+            {
+                var person = _scriptService.GetPerson(profile.PersonId);
+
+                person.FamilyName = profile.FamilyName;
+                person.GivenName = profile.GivenName;
+                person.PhoneNumber = profile.PhoneNumber;
+
+                _scriptService.Save(person);
+                
+                return;
+            }
+            
+            throw new UnauthorizedAccessException();
+        }
+        
         public PersonWithAccess GetPersonWithAccess(Guid userPersonId, Guid projectId, Guid personId)
         {
             if (HasAccessToProject(userPersonId, projectId))
@@ -260,6 +350,29 @@ namespace SAR.Apps.Server.Services
 
             throw new UnauthorizedAccessException();
         }
+
+        public void SaveProjectAccess(Guid userPersonId, Guid projectId, Guid personId, List<string> access)
+        {
+            if (IsProjectOwner(userPersonId,projectId))
+            {
+                var accessRight = _scriptService.GetProjectAccess(personId, projectId);
+
+                if (accessRight == null)
+                {
+                    accessRight = new ProjectAccess();
+                    accessRight.ProjectId = projectId;
+                    accessRight.PersonId = personId;
+                }
+
+                accessRight.AccessTypes = access;
+                _scriptService.Save(accessRight);
+
+                return;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+        
 
         public bool IsSystemOwner(Guid userId)
         {
@@ -537,6 +650,7 @@ namespace SAR.Apps.Server.Services
             var sl = new ScriptLine
             {
                 CharacterDialogId = characterDialog.Id,
+                CharacterId = characterDialog.CharacterId,
                 ProjectId = se.ProjectId,
                 Line = se.FountainRawData,
                 SequenceNumber = se.SequenceNumber,

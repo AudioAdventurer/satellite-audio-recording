@@ -31,6 +31,26 @@ export default class Projects extends Component {
       });
   }
 
+  renderTitleRow(projectId, title) {
+    if (SarService.isProjectOwner(projectId)) {
+      let projectUrl = `/projects/${projectId}`;
+
+      return (
+        <Row>
+          <Col>
+            <h4><Link to={projectUrl}>{title}</Link></h4>
+          </Col>
+        </Row>);
+    } else {
+      return (
+        <Row>
+          <Col>
+            <h4>{title}</h4>
+          </Col>
+        </Row>);
+    }
+  }
+
   renderTableBody(list) {
     if (list != null
         && list.length > 0) {
@@ -42,14 +62,9 @@ export default class Projects extends Component {
           return (
             <tr key={item.Id}>
               <td>
-                <Row>
-                  <Col>
-                    <Link to={projectUrl}>{item.Title}</Link>
-                  </Col>
-                </Row>
+                { this.renderTitleRow(item.Id, item.Title)}
                 <Row>
                   <Col sm={3}><Link to={`${projectUrl}/characters`}>Characters</Link></Col>
-                  <Col sm={3}><Link to={`${projectUrl}/scenes`}>Scenes</Link></Col>
                   <Col sm={3}><Link to={`${projectUrl}/participants`}>Participants</Link></Col>
                 </Row>
               </td>

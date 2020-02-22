@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,18 @@ namespace SAR.Apps.Server.Controllers
 
             return Ok(response);
         }
+        
+        [HttpGet]
+        [Route("api/projects/{projectId:Guid}/people/available")]
+        public ActionResult<List<Person>> GetAvailablePeople(
+            [FromRoute] Guid projectId)
+        {
+            var response = _projectService.GetAvailablePeople(
+                User.GetPersonId(),
+                projectId);
+
+            return Ok(response);
+        }
 
         [HttpGet]
         [Route("api/projects/{projectId:Guid}/people/{personId:Guid}")]
@@ -46,6 +59,50 @@ namespace SAR.Apps.Server.Controllers
             var response = _projectService.GetPerson(
                 User.GetPersonId(),
                 projectId,
+                personId);
+
+            return Ok(response);
+        }
+        
+        [HttpGet]
+        [Route("api/people/self")]
+        public ActionResult<Person> GetSelf()
+        {
+            var response = _projectService.GetPerson(
+                User.GetPersonId());
+
+            return Ok(response);
+        }
+        
+        [HttpPost]
+        [Route("api/people/self")]
+        public ActionResult SaveSelf(
+            [FromBody] Profile profile)
+        {
+            _projectService.SaveProfile(
+                User.GetPersonId(),
+                profile);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("api/access/self")]
+        public ActionResult<IEnumerable<ProjectAccess>> GetSelfAccess()
+        {
+            var access = _projectService.GetAccessRights(
+                User.GetPersonId());
+
+            return Ok(access);
+        }
+        
+        [HttpGet]
+        [Route("api/people/{personId:Guid}")]
+        public ActionResult<Person> GetPerson(
+            [FromRoute] Guid personId)
+        {
+            var response = _projectService.GetPerson(
+                User.GetUserId(),
                 personId);
 
             return Ok(response);
@@ -86,6 +143,21 @@ namespace SAR.Apps.Server.Controllers
                 User.GetUserId());
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("api/projects/{projectId:Guid}/people")]
+        public ActionResult SaveParticipantAccess(
+            [FromRoute] Guid projectId,
+            [FromBody] Participant participant)
+        {
+            _projectService.SaveProjectAccess(
+                User.GetPersonId(),
+                projectId,
+                participant.PersonId,
+                participant.AccessTypes);
+
+            return Ok();
         }
     }
 }

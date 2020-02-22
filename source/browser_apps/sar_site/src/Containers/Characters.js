@@ -66,14 +66,31 @@ export default class Characters extends Component {
             performerFamilyName = item.Performer.FamilyName;
           }
 
-          return (
-            <tr key={item.Id}>
-              <td><Link to={characterUrl}>{item.Name}</Link></td>
-              <td><Link to={linesUrl}>Lines</Link></td>
-              <td>{performerGivenName}</td>
-              <td>{performerFamilyName}</td>
-            </tr>
-          );
+          let projectId = this.state.projectId;
+
+          if (SarService.isProjectOwner(projectId)
+              || SarService.isProjectProducer(projectId)
+              || SarService.isProjectDirector(projectId)) {
+            return (
+              <tr key={item.Id}>
+                <td><Link to={characterUrl}>{item.Name}</Link></td>
+                <td><Link to={linesUrl}>Lines</Link></td>
+                <td>{performerGivenName}</td>
+                <td>{performerFamilyName}</td>
+              </tr>
+            );
+          } else {
+            return (
+              <tr key={item.Id}>
+                <td>{item.Name}</td>
+                <td><Link to={linesUrl}>Lines</Link></td>
+                <td>{performerGivenName}</td>
+                <td>{performerFamilyName}</td>
+              </tr>
+            );
+          }
+
+
         } else {
           return "";
         }

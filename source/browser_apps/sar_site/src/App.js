@@ -24,13 +24,13 @@ export default class App extends Component {
   };
 
   handleLogout = event => {
-    SarService.close();
+    SarService.logout();
     this.userHasAuthenticated(false);
   };
 
   renderUsers(){
-    if (SarService.isAdmin()
-        || SarService.isOwner())
+    if (SarService.isSystemAdmin()
+        || SarService.isSystemOwner())
     {
       return (
         <Nav.Item>
@@ -48,13 +48,26 @@ export default class App extends Component {
         <Nav className="mr-auto">
           <Nav.Item>
             <LinkContainer to="/projects">
-              <Nav.Link>Projects</Nav.Link>
+              <Nav.Link>
+                Projects
+              </Nav.Link>
             </LinkContainer>
           </Nav.Item>
           {this.renderUsers()}
         </Nav>
         <Nav >
-          <Nav.Item onClick={this.handleLogout}>Logout</Nav.Item>
+          <Nav.Item>
+            <LinkContainer to="/profile">
+              <Nav.Link>
+                Profile
+              </Nav.Link>
+            </LinkContainer>
+          </Nav.Item>
+          <Nav.Item onClick={this.handleLogout}>
+            <Nav.Link>
+              Logout
+            </Nav.Link>
+          </Nav.Item>
         </Nav>
       </Navbar.Collapse>
     );

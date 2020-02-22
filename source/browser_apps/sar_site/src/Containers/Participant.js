@@ -3,7 +3,6 @@ import React, {Component} from "react";
 import SarService from "../Services/SarService";
 import {Row, Col, Form, Button} from "react-bootstrap";
 import { Link, Redirect } from 'react-router-dom'
-import uuid from 'uuid';
 import {toast} from "react-toastify";
 
 export default class Participant extends Component {
@@ -13,34 +12,52 @@ export default class Participant extends Component {
     let personId = this.props.match.params.participantId;
     let projectId = this.props.match.params.projectId;
 
+    let isNew = false;
+    if (personId === 'new') {
+      isNew = true;
+    }
+
     this.state = {
+      isNew: isNew,
+      availablePeople: [],
+      personName: '',
       redirect:false,
       projectId:projectId,
       personId:personId,
-      givenName:"",
-      familyName:"",
-      email:"",
-      phoneNumber:"",
       accessTypes:[]
     };
 
     this.loadPerson = this.loadPerson.bind(this);
+    this.loadAvailablePeople = this.loadAvailablePeople.bind(this);
   }
 
   componentDidMount() {
-    if (this.state.personId !== 'new') {
+    if (this.state.isNew) {
+      this.loadAvailablePeople();
+    } else {
       this.loadPerson(this.state.projectId, this.state.personId);
     }
+  }
+
+  loadAvailablePeople() {
+    let projectId = this.state.projectId;
+
+    SarService.getAvailablePeople(projectId)
+      .then(r => {
+        this.setState({
+          availablePeople: r
+        });
+      })
+      .catch(e => {
+        toast.error(e.message);
+      });
   }
 
   loadPerson(projectId, personId) {
     SarService.getParticipant(projectId, personId)
       .then(r => {
         this.setState({
-          givenName: r.GivenName ?? '',
-          familyName: r.FamilyName ?? '',
-          email: r.Email ?? '',
-          phoneNumber: r.PhoneNumber ?? '',
+          personName: `${r.GivenName} ${r.FamilyName}`.trim() ,
           accessTypes: r.AccessTypes ?? []
         });
       })
@@ -55,6 +72,20 @@ export default class Participant extends Component {
     });
   };
 
+  handleAccessTypesChange = event => {
+    let options = event.target.options;
+    let value = [];
+
+    for (let i = 0, l = options.length; i < l; i++) {
+      if (options[i].selected) {
+        value.push(options[i].value);
+      }
+    }
+    this.setState({
+      accessTypes: value
+    });
+  };
+
   renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to={`/projects/${this.state.projectId}/participants`} />
@@ -65,43 +96,12 @@ export default class Participant extends Component {
     event.preventDefault();
 
     try {
-      let personId = this.state.characterId;
-      if (personId==='new'){
-        personId = uuid.v4();
-      }
-
-      let projectId = this.state.projectId;
-
-      let givenName = this.state.givenName;
-
-      let familyName = this.state.familyName;
-      if (familyName === "") {
-        familyName = null;
-      }
-
-      let phoneNumber = this.state.phoneNumber;
-      if (phoneNumber === "") {
-        phoneNumber = null;
-      }
-
-      let email = this.state.email;
-      if (email === "") {
-        email = null;
-      }
-
-      let accessTypes = this.state.accessTypes;
-
-      let person = {
-        Id: personId,
-        ProjectId: projectId,
-        GivenName: givenName,
-        FamilyName: familyName,
-        PhoneNumber: phoneNumber,
-        Email: email,
-        AccessTypes: accessTypes
+      let participantAccess = {
+        PersonId: this.state.personId,
+        AccessTypes: this.state.accessTypes
       };
 
-      SarService.saveParticipantWithAccess(person)
+      SarService.saveParticipantAccess(this.state.projectId, participantAccess)
         .then(r => {
           this.setState({
             redirect: true
@@ -115,12 +115,12 @@ export default class Participant extends Component {
     }
   };
 
-  renderSelect(){
+  renderAccessTypesSelect() {
     return(
       <Form.Control as="select"
                     multiple
                     value={this.state.accessTypes}
-                    onChange={this.handleChange}>
+                    onChange={this.handleAccessTypesChange}>
         <option value="performer">Performer</option>
         <option value="audio">Audio Engineer</option>
         <option value="director">Director</option>
@@ -130,13 +130,39 @@ export default class Participant extends Component {
       </Form.Control>);
   }
 
+  renderUsersFormGroup(users) {
+    let rows = users.map((item, i) => {
+      return (
+        <option key={i} value={item.Id}>{`${item.GivenName} ${item.FamilyName}`.trim()}</option>
+      )
+    });
+
+    return (
+      <Form.Group controlId="personId">
+        <Form.Label>User</Form.Label>
+        <Form.Control
+          as="select"
+          value={this.state.personId}
+          onChange={this.handleChange}>
+          {rows}
+        </Form.Control>
+      </Form.Group>);
+  }
+
+  renderUserName(userName) {
+    return (
+      <div>
+        {userName}
+      </div>);
+  }
+
   render() {
     return (
       <div className="Character">
         {this.renderRedirect()}
         <Row>
           <Col>
-            <h3>Participant: {`${this.state.givenName} ${this.state.familyName}`.trim()}</h3>
+            <h3>Participant: {this.state.personName}</h3>
           </Col>
           <Col>
             <div className="float-md-right">
@@ -147,47 +173,15 @@ export default class Participant extends Component {
         <Row>
           <Col>
             <Form onSubmit={this.handleSubmit}>
-              <Form.Group controlId="givenName">
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter participant given name"
-                  value={this.state.givenName}
-                  onChange={this.handleChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="familyName">
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter participant family name"
-                  value={this.state.familyName}
-                  onChange={this.handleChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter participant's email address"
-                  value={this.state.email}
-                  onChange={this.handleChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="phoneNumber">
-                <Form.Label>Phone Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter participant's phone number"
-                  value={this.state.phoneNumber}
-                  onChange={this.handleChange}
-                />
-              </Form.Group>
+              { this.state.isNew
+                ? this.renderUsersFormGroup(this.state.availablePeople)
+                : this.renderUserName(this.state.personName)}
               <Form.Group controlId="accessTypes">
                 <Form.Label>Project Access</Form.Label>
-                {this.renderSelect(this.state.accessTypes)}
+                {this.renderAccessTypesSelect(this.state.renderAccessTypesSelect)}
               </Form.Group>
-              <Button variant="primary" type="submit">
+              <Button variant="primary"
+                      type="submit">
                 Save
               </Button>
             </Form>

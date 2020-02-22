@@ -13,6 +13,7 @@ export default class Participants extends Component {
     let projectId = this.props.match.params.projectId;
 
     this.state = {
+      currentPerson: null,
       projectId: projectId,
       projectTitle: "",
       project:{},
@@ -44,17 +45,16 @@ export default class Participants extends Component {
   loadParticipants(projectId) {
     SarService.getParticipantsWithAccess(projectId)
       .then(r => {
+        let person = r.find(p => p.Id === SarService.UserProperties.PersonId);
+
         this.setState({
-          participants: r
+          participants: r,
+          currentPerson: person
         });
       })
       .catch(e => {
         toast.error(e.message);
       });
-  }
-
-  handleNewPerson() {
-
   }
 
   renderTableBody(list) {
@@ -66,18 +66,32 @@ export default class Participants extends Component {
           let url = `/projects/${this.state.projectId}/participants/${item.Id}`;
           let name = `${item.GivenName} ${item.FamilyName}`.trim();
 
-          return (
-            <tr key={item.Id}>
-              <td>
-                <Link to={url}>
-                  {name}
-                </Link>
+          if (SarService.isProjectOwner(this.state.projectId)
+              || SarService.isProjectProducer(this.state.projectId)
+              || SarService.isProjectDirector(this.state.projectId))
+          {
+            return (
+              <tr key={item.Id}>
+                <td>
+                  <Link to={url}>
+                    {name}
+                  </Link>
                 </td>
-              <td>{item.Email}</td>
-              <td>{item.PhoneNumber}</td>
-              <td>{item.AccessTypes.join(', ')}</td>
-            </tr>
-          );
+                <td>{item.Email}</td>
+                <td>{item.PhoneNumber}</td>
+                <td>{item.AccessTypes.join(', ')}</td>
+              </tr>
+            );
+          } else {
+            return (
+              <tr key={item.Id}>
+                <td>{name}</td>
+                <td>{item.Email}</td>
+                <td>{item.PhoneNumber}</td>
+                <td>{item.AccessTypes.join(', ')}</td>
+              </tr>
+            );
+          }
         } else {
           return "";
         }

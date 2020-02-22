@@ -42,7 +42,15 @@ export default class Login extends Component {
           SarService.setCookie("username", this.state.username);
           SarService.setJwt(jwt);
 
-          this.props.userHasAuthenticated(true);
+          SarService.getSelfAccess()
+            .then(r => {
+              SarService.setAccess(r);
+
+              this.props.userHasAuthenticated(true);
+            })
+            .catch(error => {
+              toast.error(error.message);
+            });
         })
         .catch(e => {
           toast.error(e.message);

@@ -11,6 +11,7 @@ import CharacterLines from "./Containers/CharacterLines";
 import Characters from "./Containers/Characters";
 import Participant from "./Containers/Participant";
 import Participants from "./Containers/Participants";
+import Profile from "./Containers/Profile";
 import Projects from "./Containers/Projects";
 import Project from "./Containers/Project";
 import RecordDialog from "./Containers/RecordDialog";
@@ -32,6 +33,7 @@ export default ({ childProps }) =>
     <AuthenticatedRoute path="/projects/:projectId/participants" exact component={Participants} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/participants/:participantId" exact component={Participant} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/dialog/:dialogId/record" exact component={RecordDialog} props={childProps} />
+    <AuthenticatedRoute path="/profile" exact component={Profile} props={childProps} />
     <AuthenticatedRoute path="/users/:userId" exact component={User} props={childProps} />
     <AuthenticatedRoute path="/users/setpassword/:userId" exact component={SetPassword} props={childProps} />
     <AuthenticatedRoute path="/users" exact component={Users} props={childProps} />

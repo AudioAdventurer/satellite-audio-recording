@@ -7,5 +7,10 @@ namespace SAR.Modules.Script.Objects
         public string GivenName { get; set; }
         public string FamilyName { get; set; }
         public string PhoneNumber { get; set; }
+        
+        //TODO Add
+        //Twitter
+        //Email - Contact vs login
+        //etc.
     }
 }

@@ -12,6 +12,7 @@ import UserDao from "../Data/UserDao";
 class SarService {
   static JWT = "";
   static UserProperties = null;
+  static UserAccess = {};
 
   //Projects
   static getProjects() {
@@ -34,6 +35,22 @@ class SarService {
     return dao.importFountain(id, formData);
   }
 
+  //Person
+  static getPerson(personId) {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.getPerson(personId);
+  }
+
+  static getSelf() {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.getSelf();
+  }
+
+  static saveProfile(profile) {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.saveProfile(profile);
+  }
+
   //Participants
   static getParticipantsWithAccess(projectId) {
     const dao = new PersonDao(Environment.BASE_URL);
@@ -45,9 +62,14 @@ class SarService {
     return dao.getParticipantWithAccess(projectId, personId);
   }
 
-  static saveParticipantWithAccess(person) {
+  static getAvailablePeople(projectId) {
     const dao = new PersonDao(Environment.BASE_URL);
-    return dao.saveParticipantWithAccess(person);
+    return dao.getAvailablePeople(projectId);
+  }
+
+  static saveParticipantAccess(projectId, participantAccess) {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.saveParticipantAccess(projectId, participantAccess);
   }
 
   //Characters
@@ -135,12 +157,86 @@ class SarService {
     return dao.login(username, password);
   }
 
+  static getSelfAccess() {
+    const dao = new PersonDao(Environment.BASE_URL);
+    return dao.getSelfAccess();
+  }
+
+  static setAccess(projectAccess) {
+    projectAccess.forEach(pa => {
+      this.UserAccess[pa.ProjectId] = pa;
+    })
+  }
+
+  static logout() {
+    this.UserProperties = [];
+    this.JWT = null;
+    this.UserAccess = {};
+  }
+
   static isSetup() {
     const dao = new SetupDao(Environment.BASE_URL);
     return dao.isSetup();
   }
 
-  static isAdmin() {
+  //Project Level Rights
+  static isProjectOwner(projectId) {
+    let access = this.UserAccess[projectId];
+
+    if (access === undefined
+        || access === null) {
+      return false;
+    }
+
+    return !!access.AccessTypes.includes("owner");
+  }
+
+  static isProjectProducer(projectId) {
+    let access = this.UserAccess[projectId];
+
+    if (access === undefined
+      || access === null) {
+      return false;
+    }
+
+    return !!access.AccessTypes.includes("producer");
+  }
+
+  static isProjectDirector(projectId) {
+    let access = this.UserAccess[projectId];
+
+    if (access === undefined
+      || access === null) {
+      return false;
+    }
+
+    return !!access.AccessTypes.includes("director");
+  }
+
+  static isProjectAudioEngineer(projectId) {
+    let access = this.UserAccess[projectId];
+
+    if (access === undefined
+      || access === null) {
+      return false;
+    }
+
+    return !!access.AccessTypes.includes("audio");
+  }
+
+  static isProjectPerformer(projectId) {
+    let access = this.UserAccess[projectId];
+
+    if (access === undefined
+      || access === null) {
+      return false;
+    }
+
+    return !!access.AccessTypes.includes("performer");
+  }
+
+  //System Level Rights
+  static isSystemAdmin() {
     if (this.UserProperties === null) {
       return false;
     }
@@ -148,7 +244,7 @@ class SarService {
     return this.UserProperties.role === 'Admin';
   }
 
-  static isOwner() {
+  static  isSystemOwner() {
     if (this.UserProperties === null) {
       return false;
     }
@@ -156,7 +252,7 @@ class SarService {
     return this.UserProperties.role === 'Owner';
   }
 
-  static isContributor() {
+  static isSystemContributor() {
     if (this.UserProperties === null) {
       return false;
     }

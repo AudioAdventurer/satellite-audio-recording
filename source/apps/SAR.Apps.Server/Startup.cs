@@ -64,49 +64,47 @@ namespace SAR.Apps.Server
             IHostingEnvironment env,
             ISarLogger logger)
         {
-            if (env.IsDevelopment())
+            app.UseExceptionHandler(errorApp =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler(errorApp =>
+                errorApp.Run(async context =>
                 {
-                    errorApp.Run(async context =>
+                    context.Response.StatusCode = 500;
+                    context.Response.ContentType = "text/html";
+
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.Append("<html lang=\"en\"><body>\r\n");
+                    sb.Append("ERROR!<br><br>\r\n");
+
+                    var exceptionHandlerPathFeature =
+                        context.Features.Get<IExceptionHandlerPathFeature>();
+
+                    var error = exceptionHandlerPathFeature?.Error;
+                    if (error != null)
                     {
-                        context.Response.StatusCode = 500;
-                        context.Response.ContentType = "text/html";
+                        sb.Append($"Error Type:{error.GetType()}<br>");
 
-                        StringBuilder sb = new StringBuilder();
-
-                        sb.Append("<html lang=\"en\"><body>\r\n");
-                        sb.Append("ERROR!<br><br>\r\n");
-
-                        var exceptionHandlerPathFeature =
-                            context.Features.Get<IExceptionHandlerPathFeature>();
-
-                        var error = exceptionHandlerPathFeature?.Error;
-                        if (error != null)
+                        try
                         {
-                            sb.Append($"Error Type:{error.GetType()}<br>");
-
-                            try
-                            {
-                                logger.Error(error.Message);
-                            }
-                            catch
-                            {
-                                //eat all errors
-                            }
-
-                            sb.Append(error.Message);
+                            logger.Error(error.Message);
+                        }
+                        catch
+                        {
+                            //eat all errors
                         }
 
-                        sb.Append("</body></html>\r\n");
-                        await context.Response.WriteAsync(sb.ToString()); // IE padding
-                    });
+                        sb.Append(error.Message);
+                    }
+                    else
+                    {
+                        logger.Error("Unknown Error");
+                    }
+
+                    sb.Append("</body></html>\r\n");
+                    await context.Response.WriteAsync(sb.ToString()); // IE padding
                 });
-            }
+            });
+            
 
             app.UseCors(x =>
             {

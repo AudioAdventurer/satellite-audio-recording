@@ -35,8 +35,8 @@ export default class Users extends Component {
   }
 
   renderTableHeader() {
-    if (SarService.isAdmin()
-        || SarService.isOwner()) {
+    if (SarService.isSystemAdmin()
+        || SarService.isSystemOwner()) {
       return (
         <thead>
           <tr>
@@ -68,8 +68,8 @@ export default class Users extends Component {
           email = 'Email Undefined';
         }
 
-        if (SarService.isAdmin()
-          || SarService.isOwner()) {
+        if (SarService.isSystemAdmin()
+          || SarService.isSystemOwner()) {
           return (
             <tr key={item.UserId}>
               <td>
@@ -88,11 +88,7 @@ export default class Users extends Component {
         } else {
           return (
             <tr key={item.UserId}>
-              <td>
-                <Link to={url}>
-                  {email}
-                </Link>
-              </td>
+              <td>{email}</td>
               <td>{name}</td>
               <td>{item.UserType}</td>
             </tr>);

@@ -9,6 +9,7 @@ import Recorder from "../Components/Recorder";
 import RecordingInstructions from "../Components/RecordingInstructions";
 import Recordings from "../Components/Recordings";
 import {toast} from "react-toastify";
+import {Link} from "react-router-dom";
 
 export default class RecordDialog extends Component {
   constructor(props) {
@@ -21,6 +22,7 @@ export default class RecordDialog extends Component {
       projectId: projectId,
       dialogId: dialogId,
       currentDialog: null,
+      characterId: "",
       nextDialogId: null,
       previousDialogId: null,
       cancelled: false,
@@ -79,6 +81,7 @@ export default class RecordDialog extends Component {
         this.setState({
           dialog: dialog,
           currentDialog: currentDialog,
+          characterId: currentDialog.CharacterId,
           nextDialogId: next,
           previousDialogId: previous,
           shouldRecord: false,
@@ -199,6 +202,11 @@ export default class RecordDialog extends Component {
         <Row>
           <Col>
             <h3>Record Dialog</h3>
+          </Col>
+          <Col>
+            <div className="float-md-right">
+              <Link to={`/projects/${this.state.projectId}/characters/${this.state.characterId}/lines`}>Return to Lines</Link>
+            </div>
           </Col>
         </Row>
         <Row>

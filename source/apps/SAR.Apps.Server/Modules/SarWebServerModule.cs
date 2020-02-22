@@ -22,7 +22,9 @@ namespace SAR.Apps.Server.Modules
         {
             SetupFolders();
 
-            builder.RegisterType<ConsoleLogger>().As<ISarLogger>();
+            builder.RegisterType<ConsoleLogger>()
+                .As<ISarLogger>()
+                .SingleInstance();
 
             builder.Register(c =>
                 {

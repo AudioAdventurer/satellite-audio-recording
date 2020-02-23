@@ -69,8 +69,7 @@ export default class Characters extends Component {
           let projectId = this.state.projectId;
 
           if (SarService.isProjectOwner(projectId)
-              || SarService.isProjectProducer(projectId)
-              || SarService.isProjectDirector(projectId)) {
+              || SarService.isProjectCasting(projectId)) {
             return (
               <tr key={item.Id}>
                 <td><Link to={characterUrl}>{item.Name}</Link></td>

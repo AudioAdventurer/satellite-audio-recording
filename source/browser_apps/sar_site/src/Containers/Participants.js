@@ -67,8 +67,7 @@ export default class Participants extends Component {
           let name = `${item.GivenName} ${item.FamilyName}`.trim();
 
           if (SarService.isProjectOwner(this.state.projectId)
-              || SarService.isProjectProducer(this.state.projectId)
-              || SarService.isProjectDirector(this.state.projectId))
+              || SarService.isProjectCasting(this.state.projectId))
           {
             return (
               <tr key={item.Id}>

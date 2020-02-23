@@ -191,17 +191,6 @@ class SarService {
     return !!access.AccessTypes.includes("owner");
   }
 
-  static isProjectProducer(projectId) {
-    let access = this.UserAccess[projectId];
-
-    if (access === undefined
-      || access === null) {
-      return false;
-    }
-
-    return !!access.AccessTypes.includes("producer");
-  }
-
   static isProjectDirector(projectId) {
     let access = this.UserAccess[projectId];
 
@@ -211,6 +200,17 @@ class SarService {
     }
 
     return !!access.AccessTypes.includes("director");
+  }
+
+  static isProjectCasting(projectId) {
+    let access = this.UserAccess[projectId];
+
+    if (access === undefined
+      || access === null) {
+      return false;
+    }
+
+    return !!access.AccessTypes.includes("casting");
   }
 
   static isProjectAudioEngineer(projectId) {

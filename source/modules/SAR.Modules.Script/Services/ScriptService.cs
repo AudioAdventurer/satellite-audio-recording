@@ -150,6 +150,11 @@ namespace SAR.Modules.Script.Services
             return _scriptElementRepo.GetByProject(projectId, start, end);
         }
 
+        public IEnumerable<ScriptElement> GetScriptElements(Guid projectId)
+        {
+            return _scriptElementRepo.GetByProject(projectId);
+        }
+
         public void Save(Character character)
         {
             _characterRepo.Save(character);
@@ -260,6 +265,11 @@ namespace SAR.Modules.Script.Services
         public CharacterDialog GetCharacterDialog(Guid characterDialogId)
         {
             return _characterDialogRepo.GetById(characterDialogId);
+        }
+
+        public IEnumerable<CharacterDialog> GetCharacterDialogByProject(Guid projectId)
+        {
+            return _characterDialogRepo.GetByProject(projectId);
         }
 
         public IEnumerable<CharacterDialog> GetCharacterDialogsByCharacter(Guid characterId)

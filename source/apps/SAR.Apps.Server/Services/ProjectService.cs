@@ -103,21 +103,6 @@ namespace SAR.Apps.Server.Services
             }
         }
 
-        public bool IsProjectOwner(Guid personId, Guid projectId)
-        {
-            var projectAccess = _scriptService.GetProjectAccess(personId, projectId);
-
-            if (projectAccess != null)
-            {
-                if (projectAccess.AccessTypes.Contains(AccessTypes.Owner))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public IEnumerable<Character> GetCharacters(Guid userPersonId, Guid projectId)
         {
             if (HasAccessToProject(userPersonId, projectId))
@@ -833,6 +818,9 @@ namespace SAR.Apps.Server.Services
                     $"{recording.Id}.wav");
                 _fileStorage.SaveFile(tempPath, data);
 
+                characterDialog.RecordingCount++;
+                _scriptService.Save(characterDialog);
+                
                 return;
             }
 
@@ -879,12 +867,16 @@ namespace SAR.Apps.Server.Services
             if (HasAccessToProject(userPersonId, projectId))
             {
                 var recording = _scriptService.GetRecording(recordingId);
-
+                var characterDialog = _scriptService.GetCharacterDialog(recording.CharacterDialogId);
+                
                 if (recording.PerformerPersonId.Equals(userPersonId)
                     || IsProjectOwner(userPersonId, projectId))
                 {
                     _scriptService.DeleteRecording(recordingId);
                     _scriptService.ResequenceRecordings(recording.CharacterDialogId);
+
+                    characterDialog.RecordingCount--;
+                    _scriptService.Save(characterDialog);
                 }
             }
             else
@@ -1030,6 +1022,209 @@ namespace SAR.Apps.Server.Services
                 }
 
                 return userEdit;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
+        public bool IsProjectPerformer(
+            Guid userPersonId,
+            Guid projectId)
+        {
+            var access = _scriptService.GetProjectAccess(userPersonId, projectId);
+                
+            return access.AccessTypes.Contains(AccessTypes.Performer);
+        }
+        
+        public bool IsProjectOwner(Guid personId, Guid projectId)
+        {
+            var projectAccess = _scriptService.GetProjectAccess(personId, projectId);
+
+            return projectAccess.AccessTypes.Contains(AccessTypes.Owner);
+        }
+        
+        public bool IsProjectAudioEngineer(Guid personId, Guid projectId)
+        {
+            var projectAccess = _scriptService.GetProjectAccess(personId, projectId);
+
+            return projectAccess.AccessTypes.Contains(AccessTypes.AudioEngineer);
+        }
+        
+        public bool IsProjectCasting(Guid personId, Guid projectId)
+        {
+            var projectAccess = _scriptService.GetProjectAccess(personId, projectId);
+
+            return projectAccess.AccessTypes.Contains(AccessTypes.Casting);
+        }
+        
+        public bool IsProjectDirector(Guid personId, Guid projectId)
+        {
+            var projectAccess = _scriptService.GetProjectAccess(personId, projectId);
+
+            return projectAccess.AccessTypes.Contains(AccessTypes.Director);
+        }
+        
+
+        public IEnumerable<SceneAudioSummary> GetSceneAudioSummary(
+            Guid userPersonId,
+            Guid projectId)
+        {
+            if (HasAccessToProject(userPersonId, projectId)
+                && (IsProjectAudioEngineer(userPersonId, projectId)
+                    || IsProjectOwner(userPersonId, projectId)))
+            {
+                var scenes = new Dictionary<Guid, SceneAudioSummary>();
+                var output = new List<SceneAudioSummary>();
+                
+                var characterDialogs = _scriptService.GetCharacterDialogByProject(projectId)
+                    .ToList();
+
+                int sceneNumber = 0;
+                foreach (var characterDialog in characterDialogs)
+                {
+                    Guid sceneId = Guid.Empty;
+                    if (characterDialog.SceneId.HasValue)
+                    {
+                        sceneId = characterDialog.SceneId.Value;
+                    }
+
+                    SceneAudioSummary summary;
+                    if (!scenes.ContainsKey(sceneId))
+                    {
+                        Scene scene = null;
+                        if (sceneId != Guid.Empty)
+                        {
+                            scene = _scriptService.GetScene(sceneId);
+                        }
+                        
+                        summary = new SceneAudioSummary();
+                        if (scene != null)
+                        {
+                            summary.Number = scene.Number;
+
+                            var sceneScriptElement = _scriptService.GetScriptElement(scene.ScriptElementId);
+                            summary.Description = sceneScriptElement.FountainRawData;
+                        }
+                        else
+                        {
+                            summary.Number = 0;
+                            summary.Description = "No scene specified";
+                        }
+
+                        scenes.Add(sceneId, summary);
+                        output.Add(summary);
+                    }
+                    else
+                    {
+                        summary = scenes[sceneId];
+                    }
+
+                    summary.Lines++;
+                    
+                    if (characterDialog.RecordingCount > 0)
+                    {
+                        summary.LinesWithAudio++;
+                    }
+
+                    CharacterAudioSummary characterSummary;
+                    if (!summary.CharacterAudio.ContainsKey(characterDialog.CharacterId))
+                    {
+                        Character character = _scriptService.GetCharacter(characterDialog.CharacterId);
+
+                        characterSummary = new CharacterAudioSummary
+                        {
+                            CharacterId = characterDialog.CharacterId,
+                            Name = character.Name
+                        };
+
+                        summary.CharacterAudio.Add(characterDialog.CharacterId, characterSummary);
+                    }
+                    else
+                    {
+                        characterSummary = summary.CharacterAudio[characterDialog.CharacterId];
+                    }
+
+                    characterSummary.Lines++;
+
+                    if (characterDialog.RecordingCount > 0)
+                    {
+                        characterSummary.LinesWithAudio++;
+                    }
+                }
+
+                return output;
+            }
+            
+            throw new UnauthorizedAccessException();
+        }
+        
+         public IEnumerable<CharacterAudioSummary> GetCharacterAudioSummary(
+            Guid userPersonId,
+            Guid projectId)
+        {
+            if (HasAccessToProject(userPersonId, projectId)
+                && (IsProjectAudioEngineer(userPersonId, projectId)
+                    || IsProjectOwner(userPersonId, projectId)))
+            {
+                var characters = new Dictionary<Guid, CharacterAudioSummary>();
+                var characterDialogs = _scriptService.GetCharacterDialogByProject(projectId)
+                    .ToList();
+
+                foreach (var characterDialog in characterDialogs)
+                {
+                    CharacterAudioSummary characterSummary;
+                    if (!characters.ContainsKey(characterDialog.CharacterId))
+                    {
+                        Character character = _scriptService.GetCharacter(characterDialog.CharacterId);
+
+                        characterSummary = new CharacterAudioSummary
+                        {
+                            CharacterId = characterDialog.CharacterId,
+                            Name = character.Name
+                        };
+
+                        characters.Add(characterDialog.CharacterId, characterSummary);
+                    }
+                    else
+                    {
+                        characterSummary = characters[characterDialog.CharacterId];
+                    }
+
+                    characterSummary.Lines++;
+
+                    if (characterDialog.RecordingCount > 0)
+                    {
+                        characterSummary.LinesWithAudio++;
+                    }
+                }
+
+                return characters.Values.ToList().OrderBy(character => character.Name);
+            }
+            
+            throw new UnauthorizedAccessException();
+        }
+
+        public void RecalcAudioLines(
+            Guid userPersonId,
+            Guid projectId)
+        {
+            if (HasAccessToProject(userPersonId, projectId)
+                && (IsProjectAudioEngineer(userPersonId, projectId)
+                    || IsProjectOwner(userPersonId, projectId)))
+            {
+                var characterDialogs = _scriptService.GetCharacterDialogByProject(projectId)
+                    .ToList();
+
+                foreach (var characterDialog in characterDialogs)
+                {
+                    var recordings = _scriptService.GetRecordings(characterDialog.Id)
+                        .ToList();
+
+                    characterDialog.RecordingCount = recordings.Count;
+                    _scriptService.Save(characterDialog);
+                }
+
+                return;
             }
 
             throw new UnauthorizedAccessException();

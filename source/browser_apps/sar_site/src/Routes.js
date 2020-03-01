@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import AppliedRoute from "./Components/AppliedRoute";
 import AuthenticatedRoute from "./Components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./Components/UnauthenticatedRoute";
+import Audio from "./Containers/Audio";
 import Home from "./Containers/Home";
 import Login from "./Containers/Login";
 import Setup from "./Containers/Setup";
@@ -27,6 +28,7 @@ export default ({ childProps }) =>
     <UnauthenticatedRoute path="/setup" exact component={Setup} props={childProps} />
     <AuthenticatedRoute path="/projects" exact component={Projects} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId" exact component={Project} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId/audio" exact component={Audio} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/characters/:characterId" exact component={Character} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/characters/:characterId/lines" exact component={CharacterLines} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/characters" exact component={Characters} props={childProps} />

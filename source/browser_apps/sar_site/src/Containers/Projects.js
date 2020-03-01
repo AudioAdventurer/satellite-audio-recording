@@ -51,6 +51,15 @@ export default class Projects extends Component {
     }
   }
 
+  renderAudioExtract(projectId, projectUrl) {
+    if (SarService.isProjectOwner(projectId)
+        || SarService.isProjectAudioEngineer(projectId)) {
+      return (
+        <Col sm={3}><Link to={`${projectUrl}/audio`}>Audio</Link></Col>
+      );
+    }
+  }
+
   renderTableBody(list) {
     if (list != null
         && list.length > 0) {
@@ -66,6 +75,7 @@ export default class Projects extends Component {
                 <Row>
                   <Col sm={3}><Link to={`${projectUrl}/characters`}>Characters</Link></Col>
                   <Col sm={3}><Link to={`${projectUrl}/participants`}>Participants</Link></Col>
+                  {this.renderAudioExtract(item.Id, projectUrl)}
                 </Row>
               </td>
               <td>{item.Description}</td>

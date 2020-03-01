@@ -18,6 +18,8 @@ export default class Project extends Component {
       selectedFile:"",
       importingScript:false
     };
+
+    this.loadData = this.loadData.bind(this);
   }
 
   componentDidMount() {

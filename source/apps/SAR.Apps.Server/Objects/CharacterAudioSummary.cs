@@ -11,5 +11,9 @@ namespace SAR.Apps.Server.Objects
         public int Lines { get; set; }
         
         public int LinesWithAudio { get; set; }
+        
+        public Guid? PerformerPersonId { get; set; }
+        
+        public string PerformerName { get; set; }
     }
 }

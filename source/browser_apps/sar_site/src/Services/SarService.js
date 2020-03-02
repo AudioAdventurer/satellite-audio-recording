@@ -8,6 +8,7 @@ import CharacterDao from "../Data/CharacterDao";
 import ScriptDao from "../Data/ScriptDao";
 import RecordingDao from "../Data/RecordingDao";
 import UserDao from "../Data/UserDao";
+import AudioDao from "../Data/AudioDao";
 
 class SarService {
   static JWT = "";
@@ -129,6 +130,18 @@ class SarService {
     const dao = new RecordingDao(Environment.BASE_URL);
     return dao.deleteRecording(projectId, recordingId);
   }
+
+  //Audio
+  static getAudioSummaryForScenes(projectId) {
+    const dao = new AudioDao(Environment.BASE_URL);
+    return dao.getAudioSummaryForScenes(projectId);
+  }
+
+  static getAudioSummaryForCharacters(projectId) {
+    const dao = new AudioDao(Environment.BASE_URL);
+    return dao.getAudioSummaryForCharacters(projectId);
+  }
+
 
   //Users
   static getUsers() {

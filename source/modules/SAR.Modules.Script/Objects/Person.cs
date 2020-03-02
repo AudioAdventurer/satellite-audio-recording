@@ -12,5 +12,7 @@ namespace SAR.Modules.Script.Objects
         //Twitter
         //Email - Contact vs login
         //etc.
+
+        public string Name => (GivenName + " " + FamilyName).Trim();
     }
 }

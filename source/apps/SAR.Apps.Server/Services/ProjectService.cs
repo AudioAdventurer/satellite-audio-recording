@@ -1134,8 +1134,15 @@ namespace SAR.Apps.Server.Services
                         characterSummary = new CharacterAudioSummary
                         {
                             CharacterId = characterDialog.CharacterId,
+                            PerformerPersonId = character.PerformerPersonId,
                             Name = character.Name
                         };
+                        
+                        if (character.PerformerPersonId.HasValue)
+                        {
+                            var person = _scriptService.GetPerson(character.PerformerPersonId.Value);
+                            characterSummary.PerformerName = person.Name;
+                        }
 
                         summary.CharacterAudio.Add(characterDialog.CharacterId, characterSummary);
                     }
@@ -1176,12 +1183,19 @@ namespace SAR.Apps.Server.Services
                     if (!characters.ContainsKey(characterDialog.CharacterId))
                     {
                         Character character = _scriptService.GetCharacter(characterDialog.CharacterId);
-
+                        
                         characterSummary = new CharacterAudioSummary
                         {
                             CharacterId = characterDialog.CharacterId,
+                            PerformerPersonId = character.PerformerPersonId,
                             Name = character.Name
                         };
+
+                        if (character.PerformerPersonId.HasValue)
+                        {
+                            var person = _scriptService.GetPerson(character.PerformerPersonId.Value);
+                            characterSummary.PerformerName = person.Name;
+                        }
 
                         characters.Add(characterDialog.CharacterId, characterSummary);
                     }

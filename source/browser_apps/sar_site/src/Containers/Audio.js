@@ -13,14 +13,18 @@ export default class Audio extends Component {
     this.state = {
       projectId: projectId,
       projectTitle: "",
+      scenes:[]
     };
+
+    this.loadProject = this.loadProject.bind(this);
+    this.loadScenes = this.loadScenes.bind(this);
   }
 
   componentDidMount() {
-    this.loadData(this.state.projectId);
+    this.loadProject(this.state.projectId);
   }
 
-  loadData(projectId) {
+  loadProject(projectId) {
     SarService.getProject(projectId)
       .then(r => {
         this.setState({
@@ -32,6 +36,17 @@ export default class Audio extends Component {
       });
   }
 
+  loadScenes(projectId) {
+    SarService.getAudioSummaryForScenes(projectId)
+      .then(r => {
+        this.setState({
+          scenes: r
+        })
+      })
+      .catch(e => {
+        toast.error(e.message);
+      })
+  }
 
 
   render() {

@@ -1,0 +1,30 @@
+.audioSummary {
+  margin-left: 10px;
+  margin-right: 10px;
+  border-bottom: 1px solid black;
+}
+
+.audioSummaryHeader {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.audioSceneSection {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-bottom: 1px solid black;
+}
+
+.audioSceneSectionNumber {
+  font-size: 1.25em;
+}
+
+.audioSceneSectionDescription {
+  font-size: 1.25em;
+}
+
+.audioSceneSectionLines {
+  font-size: 1.25em;
+}

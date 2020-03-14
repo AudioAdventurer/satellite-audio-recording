@@ -1075,8 +1075,17 @@ namespace SAR.Apps.Server.Services
             {
                 var scenes = new Dictionary<Guid, SceneAudioSummary>();
                 var output = new List<SceneAudioSummary>();
+
+                var characters = _scriptService
+                    .GetCharactersByProject(projectId)
+                    .ToDictionary(c => c.Id);
+
+                var people = _scriptService
+                    .GetPeople()
+                    .ToDictionary(p => p.Id);
                 
-                var characterDialogs = _scriptService.GetCharacterDialogByProject(projectId)
+                var characterDialogs = _scriptService
+                    .GetCharacterDialogByProject(projectId)
                     .ToList();
 
                 int sceneNumber = 0;
@@ -1129,7 +1138,7 @@ namespace SAR.Apps.Server.Services
                     CharacterAudioSummary characterSummary;
                     if (!summary.CharacterAudio.ContainsKey(characterDialog.CharacterId))
                     {
-                        Character character = _scriptService.GetCharacter(characterDialog.CharacterId);
+                        Character character = characters[characterDialog.CharacterId];
 
                         characterSummary = new CharacterAudioSummary
                         {
@@ -1140,7 +1149,7 @@ namespace SAR.Apps.Server.Services
                         
                         if (character.PerformerPersonId.HasValue)
                         {
-                            var person = _scriptService.GetPerson(character.PerformerPersonId.Value);
+                            var person = people[character.PerformerPersonId.Value];
                             characterSummary.PerformerName = person.Name;
                         }
 
@@ -1173,16 +1182,22 @@ namespace SAR.Apps.Server.Services
                 && (IsProjectAudioEngineer(userPersonId, projectId)
                     || IsProjectOwner(userPersonId, projectId)))
             {
-                var characters = new Dictionary<Guid, CharacterAudioSummary>();
+                var characters = _scriptService
+                    .GetCharactersByProject(projectId)
+                    .ToDictionary(c => c.Id);
+
+                var performers = _scriptService.GetPeople().ToDictionary(p => p.Id);
+                var characterSummaries = new Dictionary<Guid, CharacterAudioSummary>();
+                
                 var characterDialogs = _scriptService.GetCharacterDialogByProject(projectId)
                     .ToList();
 
                 foreach (var characterDialog in characterDialogs)
                 {
                     CharacterAudioSummary characterSummary;
-                    if (!characters.ContainsKey(characterDialog.CharacterId))
+                    if (!characterSummaries.ContainsKey(characterDialog.CharacterId))
                     {
-                        Character character = _scriptService.GetCharacter(characterDialog.CharacterId);
+                        Character character = characters[characterDialog.CharacterId];
                         
                         characterSummary = new CharacterAudioSummary
                         {
@@ -1193,15 +1208,15 @@ namespace SAR.Apps.Server.Services
 
                         if (character.PerformerPersonId.HasValue)
                         {
-                            var person = _scriptService.GetPerson(character.PerformerPersonId.Value);
+                            var person = performers[character.PerformerPersonId.Value];
                             characterSummary.PerformerName = person.Name;
                         }
 
-                        characters.Add(characterDialog.CharacterId, characterSummary);
+                        characterSummaries.Add(characterDialog.CharacterId, characterSummary);
                     }
                     else
                     {
-                        characterSummary = characters[characterDialog.CharacterId];
+                        characterSummary = characterSummaries[characterDialog.CharacterId];
                     }
 
                     characterSummary.Lines++;
@@ -1212,7 +1227,7 @@ namespace SAR.Apps.Server.Services
                     }
                 }
 
-                return characters.Values.ToList().OrderBy(character => character.Name);
+                return characterSummaries.Values.ToList().OrderBy(character => character.Name);
             }
             
             throw new UnauthorizedAccessException();

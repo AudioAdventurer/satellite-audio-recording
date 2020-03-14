@@ -47,6 +47,8 @@ export default class Audio extends Component {
       .then(r => {
         this.setState({
           scenes: r
+        }, () => {
+         // this.loadCharacters(projectId);
         })
       })
       .catch(e => {
@@ -97,7 +99,10 @@ export default class Audio extends Component {
         <div className="audioSceneSection" key={i}>
           <Row className="audioSceneSectionDescription">
             <Col>
-              Description: {character.Name}
+              Character Name: {character.Name}
+            </Col>
+            <Col>
+              Performer: {character.PerformerName}
             </Col>
           </Row>
           <Row className="audioSceneSectionLines">

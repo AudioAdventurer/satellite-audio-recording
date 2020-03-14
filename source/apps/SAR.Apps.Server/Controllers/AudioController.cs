@@ -30,10 +30,11 @@ namespace SAR.Apps.Server.Controllers
         [Route("api/projects/{projectId:Guid}/audiosummary/scenes")]
         public ActionResult<IEnumerable<SceneAudioSummary>> GetSceneAudioSummary([FromRoute] Guid projectId)
         {
+            _logger.Info("Getting Scene Audio Summary");
             var response = _projectService.GetSceneAudioSummary(
                 User.GetPersonId(),
                 projectId);
-
+            _logger.Info("Completed Scene Audio Summary");
             return Ok(response);
         }
         
@@ -41,10 +42,11 @@ namespace SAR.Apps.Server.Controllers
         [Route("api/projects/{projectId:Guid}/audiosummary/characters")]
         public ActionResult<IEnumerable<CharacterAudioSummary>> GetCharacterAudioSummary([FromRoute] Guid projectId)
         {
+            _logger.Info("Getting Character Audio Summary");
             var response = _projectService.GetCharacterAudioSummary(
                 User.GetPersonId(),
                 projectId);
-
+            _logger.Info("Completed Character Audio Summary");
             return Ok(response);
         }
         

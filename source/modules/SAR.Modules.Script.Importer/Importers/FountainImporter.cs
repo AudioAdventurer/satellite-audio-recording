@@ -119,6 +119,38 @@ namespace SAR.Modules.Script.Importer.Importers
             //Clear any old information
             _scriptService.DeleteProjectScript(projectId);
 
+            var maxSequenceNumber = sequenceNumber - 1;
+            
+            //Force a scene zero into script if script doesn't start with a scene
+            var firstScene = scenes[0];
+            if (firstScene.ScriptSequenceNumber != 0)
+            {
+                var sceneZero = new Scene
+                {
+                    ProjectId = projectId, 
+                    ScriptSequenceNumber = -1, 
+                    Number = 0, 
+                    ScriptElementId = null
+                };
+                
+                scenes.Insert(0, sceneZero);
+            }
+            
+            //Set scene end points for easier loading of entire scene
+            int sceneCount = scenes.Count;
+
+            for (int i = 0; i < sceneCount-1; i++)
+            {
+                var current = scenes[i];
+                var next = scenes[i + 1];
+
+                current.SceneEndSequenceNumber = next.ScriptSequenceNumber - 1;
+            }
+
+            var last = scenes[sceneCount - 1];
+            last.SceneEndSequenceNumber = maxSequenceNumber;
+            
+
             //Find first and last lines for each character
             foreach (var key in characters.Keys)
             {

@@ -295,6 +295,15 @@ namespace SAR.Modules.Script.Services
                 .FirstOrDefault();
         }
 
+        public CharacterDialog GetCharacterDialogByScriptSequenceNumber(
+            Guid projectId,
+            int scriptSequenceNumber)
+        {
+            return _characterDialogRepo.GetByScriptSequenceNumber(
+                projectId,
+                scriptSequenceNumber);
+        }
+
         public IEnumerable<CharacterDialog> GetNextCharacterDialogsByCharacter(
             Guid characterId,
             int currentScriptSequenceNumber,

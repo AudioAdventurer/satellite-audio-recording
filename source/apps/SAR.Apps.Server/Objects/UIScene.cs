@@ -11,5 +11,6 @@ namespace SAR.Apps.Server.Objects
         public string TimeOfDay { get; set; }
         public string SceneNumber { get; set; }
         public int ScriptPosition { get; set; }
+        public int ScriptEndPosition { get; set; }
     }
 }

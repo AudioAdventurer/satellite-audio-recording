@@ -252,6 +252,7 @@ export default class RecordDialog extends Component {
             </Row>
             <FocusDialogViewer
               dialog={this.state.dialog}
+              currentDialogId={this.state.dialogId}
             />
           </Col>
           <Col md={3}>

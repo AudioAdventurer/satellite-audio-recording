@@ -1,14 +1,16 @@
 import Environment from "../env.js";
 import axios from 'axios';
-import AuthDao from "../Data/AuthDao";
-import SetupDao from "../Data/SetupDao";
-import ProjectDao from "../Data/ProjectDao";
-import PersonDao from "../Data/PersonDao";
-import CharacterDao from "../Data/CharacterDao";
-import ScriptDao from "../Data/ScriptDao";
-import RecordingDao from "../Data/RecordingDao";
-import UserDao from "../Data/UserDao";
 import AudioDao from "../Data/AudioDao";
+import AuthDao from "../Data/AuthDao";
+import CharacterDao from "../Data/CharacterDao";
+import PersonDao from "../Data/PersonDao";
+import ProjectDao from "../Data/ProjectDao";
+import RecordingDao from "../Data/RecordingDao";
+import SceneDao from "../Data/SceneDao";
+import ScriptDao from "../Data/ScriptDao";
+import SetupDao from "../Data/SetupDao";
+import UserDao from "../Data/UserDao";
+
 
 class SarService {
   static JWT = "";
@@ -34,6 +36,12 @@ class SarService {
   static importFountain(id, formData) {
     const dao = new ProjectDao(Environment.BASE_URL);
     return dao.importFountain(id, formData);
+  }
+
+  //Scenes
+  static getScenes(projectId) {
+    const dao = new SceneDao(Environment.BASE_URL);
+    return dao.getScenes(projectId);
   }
 
   //Person
@@ -90,6 +98,11 @@ class SarService {
   }
 
   //Script
+  static getLines(projectId, start, end) {
+    const dao = new ScriptDao(Environment.BASE_URL);
+    return dao.getLines(projectId, start, end);
+  }
+
   static getNextLinesByCharacter(projectId, characterId, start, length) {
     const dao = new ScriptDao(Environment.BASE_URL);
     return dao.getNextLinesByCharacter(projectId, characterId, start, length);

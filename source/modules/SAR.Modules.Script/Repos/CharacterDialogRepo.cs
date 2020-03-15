@@ -60,6 +60,14 @@ namespace SAR.Modules.Script.Repos
                 .ToEnumerable();
         }
 
+        public CharacterDialog GetByScriptSequenceNumber(Guid projectId, int scriptSequenceNumber)
+        {
+            return Collection.Query()
+                .Where(x => x.ProjectId == projectId
+                            && x.ScriptSequenceNumber == scriptSequenceNumber)
+                .FirstOrDefault();
+        }
+
         public void DeleteByProject(Guid projectId)
         {
             var q = Query.EQ("ProjectId", projectId);

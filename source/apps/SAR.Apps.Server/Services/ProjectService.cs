@@ -426,19 +426,39 @@ namespace SAR.Apps.Server.Services
                 return null;
             }
 
-            var scriptElement = _scriptService.GetScriptElement(scene.ScriptElementId);
-            var fs = (SceneElement)scriptElement.ToFountain();
-
-            UIScene s = new UIScene
+            UIScene s;
+            
+            if (scene.ScriptElementId.HasValue)
             {
-                Id = scene.Id,
-                InteriorExterior = fs.InteriorExterior,
-                Location = fs.Location,
-                SceneNumber = fs.SceneNumber,
-                TimeOfDay = fs.TimeOfDay,
-                SequenceNumber = scene.Number,
-                ScriptPosition = scriptElement.SequenceNumber
-            };
+                var scriptElement = _scriptService.GetScriptElement(scene.ScriptElementId.Value);
+                var fs = (SceneElement) scriptElement.ToFountain();
+
+                s = new UIScene
+                {
+                    Id = scene.Id,
+                    InteriorExterior = fs.InteriorExterior,
+                    Location = fs.Location,
+                    SceneNumber = fs.SceneNumber,
+                    TimeOfDay = fs.TimeOfDay,
+                    SequenceNumber = scene.Number,
+                    ScriptPosition = scriptElement.SequenceNumber,
+                    ScriptEndPosition = scene.SceneEndSequenceNumber
+                };
+            }
+            else
+            {
+                s = new UIScene
+                {
+                    Id = scene.Id,
+                    InteriorExterior = null,
+                    Location = null,
+                    SceneNumber = null,
+                    TimeOfDay = null,
+                    SequenceNumber = scene.Number,
+                    ScriptPosition = scene.ScriptSequenceNumber,
+                    ScriptEndPosition = scene.SceneEndSequenceNumber
+                };
+            }
 
             return s;
         }
@@ -666,6 +686,14 @@ namespace SAR.Apps.Server.Services
         {
             var parts = scriptElement.FountainElementType.Split(".".ToCharArray());
             var type = parts[parts.Length - 1].Replace("Element", "");
+            CharacterDialog cd = null;
+            
+            if (type.Equals(ElementTypes.Dialogue, StringComparison.InvariantCultureIgnoreCase))
+            {
+                cd = _scriptService.GetCharacterDialogByScriptSequenceNumber(
+                    scriptElement.ProjectId,
+                    scriptElement.SequenceNumber);
+            }
 
             var sl = new ScriptLine
             {
@@ -676,6 +704,12 @@ namespace SAR.Apps.Server.Services
                 LineType = type,
                 RecordingCount = 0
             };
+
+            if (cd != null)
+            {
+                sl.CharacterDialogId = cd.Id;
+                sl.CharacterId = cd.CharacterId;
+            }
 
             return sl;
         }
@@ -1111,8 +1145,11 @@ namespace SAR.Apps.Server.Services
                         {
                             summary.Number = scene.Number;
 
-                            var sceneScriptElement = _scriptService.GetScriptElement(scene.ScriptElementId);
-                            summary.Description = sceneScriptElement.FountainRawData;
+                            if (scene.ScriptElementId.HasValue)
+                            {
+                                var sceneScriptElement = _scriptService.GetScriptElement(scene.ScriptElementId.Value);
+                                summary.Description = sceneScriptElement.FountainRawData;
+                            }
                         }
                         else
                         {

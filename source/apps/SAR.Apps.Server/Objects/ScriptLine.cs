@@ -6,7 +6,7 @@ namespace SAR.Apps.Server.Objects
     {
         public Guid? CharacterDialogId { get; set; }
         
-        public Guid CharacterId { get; set; }
+        public Guid? CharacterId { get; set; }
 
         public int SequenceNumber { get; set; }
 

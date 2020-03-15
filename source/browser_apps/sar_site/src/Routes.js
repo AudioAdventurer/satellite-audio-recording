@@ -16,6 +16,7 @@ import Profile from "./Containers/Profile";
 import Projects from "./Containers/Projects";
 import Project from "./Containers/Project";
 import RecordDialog from "./Containers/RecordDialog";
+import ScriptViewer from "./Containers/ScriptViewer";
 import SetPassword from "./Containers/SetPassword";
 import User from "./Containers/User"
 import Users from "./Containers/Users";
@@ -32,9 +33,10 @@ export default ({ childProps }) =>
     <AuthenticatedRoute path="/projects/:projectId/characters/:characterId" exact component={Character} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/characters/:characterId/lines" exact component={CharacterLines} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/characters" exact component={Characters} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId/dialog/:dialogId/record" exact component={RecordDialog} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/participants" exact component={Participants} props={childProps} />
     <AuthenticatedRoute path="/projects/:projectId/participants/:participantId" exact component={Participant} props={childProps} />
-    <AuthenticatedRoute path="/projects/:projectId/dialog/:dialogId/record" exact component={RecordDialog} props={childProps} />
+    <AuthenticatedRoute path="/projects/:projectId/script" exact component={ScriptViewer} props={childProps} />
     <AuthenticatedRoute path="/profile" exact component={Profile} props={childProps} />
     <AuthenticatedRoute path="/users/:userId" exact component={User} props={childProps} />
     <AuthenticatedRoute path="/users/setpassword/:userId" exact component={SetPassword} props={childProps} />

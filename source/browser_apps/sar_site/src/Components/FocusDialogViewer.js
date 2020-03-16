@@ -80,8 +80,6 @@ export default class FocusDialogViewer extends React.Component {
               </Col>
             </Row>);
         } else {
-          console.info(item);
-
           return (<Row key={i}/>)
         }
       });

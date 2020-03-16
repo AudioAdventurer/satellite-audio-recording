@@ -18,7 +18,8 @@ export default class DialogViewer extends React.Component {
     if (dialog.length> 0) {
       let cd = dialog.find(d => d.CharacterDialogId !== null);
 
-      if (cd !== null) {
+      if (cd !== undefined
+          && cd !== null) {
         this.setState({
           selectedDialogId: cd.CharacterDialogId
         }, () => {
@@ -36,7 +37,8 @@ export default class DialogViewer extends React.Component {
       if (dialog.length> 0) {
         let cd = dialog.find(d => d.CharacterDialogId !== null);
 
-        if (cd !== null) {
+        if (cd !== undefined
+            && cd !== null) {
           this.setState({
             selectedDialogId: cd.CharacterDialogId
           }, () => {
@@ -155,8 +157,6 @@ export default class DialogViewer extends React.Component {
               </Col>
             </Row>);
         } else {
-          console.info(item);
-
           return (<Row key={i}/>)
         }
       });

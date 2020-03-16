@@ -1,6 +1,6 @@
+import "./DialogViewer.css";
 import React from "react";
 import {Row, Col, Button} from "react-bootstrap";
-import {forEach} from "react-bootstrap/cjs/ElementChildren";
 
 export default class DialogViewer extends React.Component {
 
@@ -95,8 +95,11 @@ export default class DialogViewer extends React.Component {
                 }}>
                   {item.Line}
                 </Col>
-                <Col md={2}>
+                <Col md={2}
+                     className="DialogViewerSelectColumn"
+                >
                   <Button
+                    className="DialogViewerSelectButton"
                     id={item.CharacterDialogId}
                     onClick={this.handleSelect}
                   >
@@ -117,8 +120,11 @@ export default class DialogViewer extends React.Component {
                 }}>
                   {item.Line}
                 </Col>
-                <Col md={2}>
+                <Col md={2}
+                  className="DialogViewerSelectColumn"
+                >
                   <Button
+                    className="DialogViewerSelectButton"
                     id={item.CharacterDialogId}
                     onClick={this.handleSelect}
                   >

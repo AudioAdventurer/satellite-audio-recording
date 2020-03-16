@@ -1,3 +1,4 @@
+import "./Scenes.css";
 import React from "react";
 import {Row, Col, Table, Button} from "react-bootstrap";
 
@@ -16,7 +17,9 @@ export default class Scenes extends React.Component {
           <tr key={i}>
             <td>
               <Button
+                className="SelectSceneButton"
                 id={i}
+                size="sm"
                 onClick={this.handleClick}
               >
                 {item.SequenceNumber}

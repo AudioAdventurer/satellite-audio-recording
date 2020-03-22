@@ -1,20 +1,30 @@
 import React, { Component } from "react";
-import {Row, Col, Button} from "react-bootstrap";
+import {Row, Col, Button, Modal} from "react-bootstrap";
 import PropTypes from 'prop-types';
 import SarService from "../Services/SarService";
 import moment from "moment";
 import {Howl} from 'howler';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class RecordingPlayer extends Component {
+
+  sound = null;
 
   constructor(props) {
     super(props);
 
     this.state = {
       blob: null,
+      id: uuidv4(),
+      showDeleteModal: false
     };
 
     this.playBlob = this.playBlob.bind(this);
+    this.playStopped = this.playStopped.bind(this);
+    this.handleStop = this.handleStop.bind(this);
+
+    this.handleShowDeleteModal = this.handleShowDeleteModal.bind(this);
+    this.handleCloseDeleteModal = this.handleCloseDeleteModal.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
   }
 
@@ -76,25 +86,83 @@ export default class RecordingPlayer extends Component {
   };
 
   playBlob() {
-    let url = URL.createObjectURL(this.state.blob);
+    this.setState({
+      playing: true
+    }, ()=> {
+      let url = URL.createObjectURL(this.state.blob);
 
-    let sound = new Howl({
-      src: [url],
-      format: ['wav']
+      this.sound = new Howl({
+        src: [url],
+        format: ['wav'],
+        onend: this.playStopped
+      });
+
+      this.sound.play();
     });
+  }
 
-    sound.play();
+  playStopped() {
+    this.setState({
+      playing: false
+    });
+  }
+
+  handleStop() {
+    if (this.sound !== null) {
+      this.sound.stop();
+      this.playStopped();
+    }
   }
 
   handleDelete() {
+    this.handleCloseDeleteModal();
+
     if (this.props.onDelete !== undefined) {
       this.props.onDelete(this.props.recording);
     }
   }
 
+  handleShowDeleteModal() {
+    this.setState({
+      showDeleteModal: true
+    });
+  }
+
+  handleCloseDeleteModal() {
+    this.setState({
+      showDeleteModal:false
+    });
+  }
+
+
   render() {
     return (
       <Row style={{paddingTop:10}}>
+        <Modal
+          id={this.state.id}
+          show={this.state.showDeleteModal}
+          onHide={this.handleCloseDeleteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Delete Recording</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <p>Are you sure that you want to delete this recording?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={this.handleCloseDeleteModal}>
+              Close
+            </Button>
+            <Button
+              variant="primary"
+              onClick={this.handleDelete}
+              >
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <Col>
           <Row>
             <Col md={2}>
@@ -112,18 +180,25 @@ export default class RecordingPlayer extends Component {
               <Button
                 variant={"secondary"}
                 size={"sm"}
-                onClick={this.handlePlay}>
+                onClick={this.handlePlay}
+                disabled={this.state.playing}>
                 Play
               </Button>
             </Col>
             <Col md={4}>
-              &nbsp;
+              <Button
+                variant={"secondary"}
+                size={"sm"}
+                onClick={this.handleStop}
+                disabled={!this.state.playing}>
+                Stop
+              </Button>
             </Col>
             <Col md={3}>
               <Button
                 variant={"secondary"}
                 size={"sm"}
-                onClick={this.handleDelete}>
+                onClick={this.handleShowDeleteModal}>
                 Delete
               </Button>
             </Col>

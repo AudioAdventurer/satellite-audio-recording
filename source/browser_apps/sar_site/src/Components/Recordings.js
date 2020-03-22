@@ -33,15 +33,17 @@ export default class Recordings extends React.Component {
   }
 
   loadRecordings(projectId, dialogId) {
-    SarService.getRecordings(projectId, dialogId)
-      .then(r=> {
-        this.setState({
-          recordings: r
+    if (dialogId !== null) {
+      SarService.getRecordings(projectId, dialogId)
+        .then(r => {
+          this.setState({
+            recordings: r
+          });
+        })
+        .catch(error => {
+          alert(error.message);
         });
-      })
-      .catch(error => {
-        alert(error.message);
-      });
+    }
   }
 
   handleDelete(item) {

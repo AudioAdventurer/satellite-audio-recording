@@ -188,11 +188,11 @@ export default class ScriptViewer extends Component {
             />
           </Col>
           <Col md={3}>
-            {/*<Recordings*/}
-            {/*  projectId={this.state.projectId}*/}
-            {/*  dialogId={this.state.dialogId}*/}
-            {/*  recordingsTimestamp = {this.state.recordingsTimestamp}*/}
-            {/*/>*/}
+            <Recordings
+              projectId={this.state.projectId}
+              dialogId={this.state.selectedDialogId}
+              recordingsTimestamp = {this.state.recordingsTimestamp}
+            />
           </Col>
         </Row>
       </div>

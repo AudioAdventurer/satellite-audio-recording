@@ -8,7 +8,7 @@ export default class DialogViewer extends React.Component {
     super(props);
 
     this.state = {
-      selectedDialogId:null
+      selectedDialogId: null
     };
   }
 

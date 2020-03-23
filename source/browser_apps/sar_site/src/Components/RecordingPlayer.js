@@ -185,7 +185,7 @@ export default class RecordingPlayer extends Component {
                 Play
               </Button>
             </Col>
-            <Col md={4}>
+            <Col md={3}>
               <Button
                 variant={"secondary"}
                 size={"sm"}

@@ -64,6 +64,7 @@ export default class Projects extends Component {
               <td>
                 { this.renderTitleRow(item.Id, item.Title)}
                 <Row>
+                  <Col sm={3}><Link to={`${projectUrl}/script`}>Script</Link></Col>
                   <Col sm={3}><Link to={`${projectUrl}/characters`}>Characters</Link></Col>
                   <Col sm={3}><Link to={`${projectUrl}/participants`}>Participants</Link></Col>
                 </Row>

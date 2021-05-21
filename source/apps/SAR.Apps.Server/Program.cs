@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
-using SAR.Libraries.Common.Trace;
+using ConsoleTraceListener = SAR.Libraries.Common.Trace.ConsoleTraceListener;
 
 namespace SAR.Apps.Server
 {
@@ -23,14 +23,14 @@ namespace SAR.Apps.Server
             var config = Config.GetInstance();
 
             var host = new WebHostBuilder()
-                .UseKestrel()
+                .UseKestrel(options => options.AddServerHeader = false)
                 .ConfigureServices(services =>
                 {
                     services.AddCors();
-
-                    services.AddMvc()
-                        .AddJsonOptions(options =>
+                    services.AddControllers()
+                        .AddNewtonsoftJson(options =>
                             options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+                    services.AddMvc();
 
                     services.AddAutofac(c =>
                     {

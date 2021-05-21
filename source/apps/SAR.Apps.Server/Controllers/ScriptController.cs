@@ -44,6 +44,20 @@ namespace SAR.Apps.Server.Controllers
         }
 
         [HttpGet]
+        [Route("api/projects/{projectId:Guid}/script/scene/{sceneId:Guid}")]
+        public ActionResult<IEnumerable<ScriptLine>> GetScript(
+            [FromRoute] Guid projectId,
+            [FromRoute] Guid sceneId)
+        {
+            var response = _projectService.GetScript(
+                User.GetPersonId(),
+                projectId,
+                sceneId);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
         [Route("api/projects/{projectId:Guid}/script/{characterId:Guid}/next/{currentScriptSequenceNumber:int}")]
         public ActionResult<ScriptLine> GetNextScriptLineByCharacter(
             [FromRoute] Guid projectId,

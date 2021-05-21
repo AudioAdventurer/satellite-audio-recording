@@ -23,6 +23,15 @@ namespace SAR.Modules.Script.Repos
                 .ToEnumerable();
         }
 
+        public Scene GetByProjectNumber(Guid projectId, int sceneNumber)
+        {
+            var query = Query.And(
+                Query.EQ("ProjectId", projectId),
+                Query.EQ("Number", sceneNumber));
+
+            return Collection.FindOne(query);
+        }
+
         public void DeleteByProject(Guid projectId)
         {
             var q = Query.EQ("ProjectId", projectId);

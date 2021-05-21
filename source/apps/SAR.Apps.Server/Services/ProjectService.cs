@@ -489,6 +489,36 @@ namespace SAR.Apps.Server.Services
             throw new UnauthorizedAccessException();
         }
 
+        public IEnumerable<ScriptLine> GetScript(Guid userPersonId, Guid projectId, Guid sceneId)
+        {
+            if (HasAccessToProject(userPersonId, projectId))
+            {
+                var thisScene = _scriptService.GetScene(sceneId);
+
+                int start = thisScene.ScriptSequenceNumber; // Include the script scene line itself.
+                int? end = null;
+
+                var nextScene = _scriptService.GetSceneByProjectNumber(projectId, thisScene.Number + 1);
+                if (nextScene != null)
+                {
+                    end = nextScene.ScriptSequenceNumber - 1; //Remove the next scenes line.
+                }
+                
+                var elements = _scriptService.GetScriptElements(projectId, start, end);
+
+                var output = new List<ScriptLine>();
+
+                foreach (var se in elements)
+                {
+                    output.Add(BuildScriptLine(se));
+                }
+
+                return output;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
         public IEnumerable<ScriptLine> GetScript(Guid userPersonId, Guid projectId, int start, int end)
         {
             if (HasAccessToProject(userPersonId, projectId))

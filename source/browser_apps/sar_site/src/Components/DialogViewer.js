@@ -3,8 +3,38 @@ import {Row, Col} from "react-bootstrap";
 
 export default class DialogViewer extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      dialog:[]
+    };
+  }
+
+  componentDidMount() {
+
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.dialog.length !== this.props.dialog.length) {
+      this.setState({
+        dialog: this.props.dialog
+      })
+
+      return;
+    }
+
+    if (this.props.dialog.length > 0
+        && prevProps.dialog.length > 0
+        && this.props.dialog[0].Line !== prevProps.dialog[0].Line) {
+      this.setState({
+        dialog: this.props.dialog
+      })
+    }
+  }
+
   renderDialog(list) {
-    if (list != null
+    if (list !== null
       && list.length > 0) {
       let rows =  list.map((item, i) => {
         if (item.LineType === 'Scene') {
@@ -83,7 +113,7 @@ export default class DialogViewer extends React.Component {
 
   render() {
     return (
-      <Row style={{marginLeft:0, marginRight:0}}>
+      <Row style={{marginLeft:0, marginRight:0, height:this.props.height}}>
         <Col>
           <Row>
             <Col>
@@ -91,7 +121,7 @@ export default class DialogViewer extends React.Component {
             </Col>
           </Row>
           <Row>
-            { this.renderDialog(this.props.dialog) }
+            { this.renderDialog(this.state.dialog) }
           </Row>
         </Col>
       </Row>

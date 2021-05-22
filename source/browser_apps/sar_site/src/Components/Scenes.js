@@ -8,10 +8,11 @@ export default class Scenes extends React.Component {
 
     this.state = {
       scenes:[],
-      selectedScene: null
+      selectedScene: null,
     };
-  }
 
+    this.handleClick = this.handleClick.bind(this);
+  }
 
   componentDidMount() {
 
@@ -21,16 +22,37 @@ export default class Scenes extends React.Component {
 
   }
 
+  handleClick(obj) {
+    let scene = null;
+    let id = obj.currentTarget.id;
+    let scenes = this.state.scenes;
+
+    for (let i = 0; i < scenes.length; i++){
+      let current = scenes[i];
+
+      if (id === current.Id) {
+        scene = current;
+        break;
+      }
+    }
+
+    this.setState({
+      selectedScene: scene
+    }, ()=> {
+      this.props.onSceneSelected(scene);
+    });
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.scenes=== null && this.props.scenes !== null) {
       this.setState({
         scenes: this.props.scenes
       });
-    } else if (prevProps.scenes !== null && this.props.scenes === null){
+    } else if (prevProps.scenes !== null && this.props.scenes === null) {
       this.setState({
         scenes:[]
       });
-    } else if (prevProps.scenes.length !== this.props.scenes.length){
+    } else if (prevProps.scenes.length !== this.props.scenes.length) {
       this.setState({
         scenes: this.props.scenes
       });
@@ -38,7 +60,7 @@ export default class Scenes extends React.Component {
   }
 
   renderScenes(scenes) {
-    if (scenes != null
+    if (scenes !== null
       && scenes.length > 0) {
       let rows =  scenes.map((item, i) => {
         const line = SarService.getSceneLine(item);
@@ -57,9 +79,12 @@ export default class Scenes extends React.Component {
               style={{paddingBottom:"5px"}}>
               <Col>
                 <Button
+                  id={item.Id}
                   size="sm"
                   variant="primary"
-                  style={style}>
+                  style={style}
+                  onClick={this.handleClick}
+                >
                   {line}
                 </Button>
               </Col>
@@ -72,9 +97,12 @@ export default class Scenes extends React.Component {
               style={{paddingBottom:"5px"}}>
               <Col>
                 <Button
+                  id={item.Id}
                   size="sm"
                   variant="secondary"
-                  style={style}>
+                  style={style}
+                  onClick={this.handleClick}
+                >
                   {line}
                 </Button>
               </Col>
@@ -84,7 +112,7 @@ export default class Scenes extends React.Component {
       });
 
       return (
-        <Row style={{overflow:"scroll",height:"600px"}}>
+        <Row style={{overflow:"scroll",height:this.props.height - 60}}>
           <Col>
             {rows}
           </Col>
@@ -96,7 +124,7 @@ export default class Scenes extends React.Component {
 
   render() {
     return (
-      <Row>
+      <Row style={{height: this.props.height}}>
         <Col>
           <Row>
             <Col>

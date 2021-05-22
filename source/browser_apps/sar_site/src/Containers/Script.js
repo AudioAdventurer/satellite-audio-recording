@@ -18,17 +18,34 @@ export default class Script extends Component {
       scenes: [],
       dialog:[],
       projectId: projectId,
-      sceneId: null
+      childHeight: window.innerHeight - 100
     };
 
     this.handleSceneSelected = this.handleSceneSelected.bind(this);
     this.loadScenes = this.loadScenes.bind(this);
     this.loadDialog = this.loadDialog.bind(this);
+    this.handleResize = this.handleResize.bind(this);
+
+    window.addEventListener('resize', this.handleResize);
+
+    this.handleResize();
   }
 
-  handleSceneSelected(sceneId) {
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  handleResize() {
+    let height = window.innerHeight - 100;
+
     this.setState({
-      sceneId: sceneId
+      childHeight: height
+    });
+  }
+
+  handleSceneSelected(scene) {
+    this.setState({
+      currentScene: scene
     }, ()=>{
       this.loadDialog();
     });
@@ -51,8 +68,8 @@ export default class Script extends Component {
   }
 
   loadDialog() {
-    if (this.state.sceneId !== null) {
-      SarService.getLinesByScene(this.state.projectId, this.state.sceneId)
+    if (this.state.currentScene !== null) {
+      SarService.getLinesByScene(this.state.projectId, this.state.currentScene.Id)
         .then(r => {
           this.setState({
             dialog: r
@@ -80,11 +97,13 @@ export default class Script extends Component {
             <Scenes
               onSceneSelected={this.handleSceneSelected}
               scenes={this.state.scenes}
+              height={this.state.childHeight}
             />
           </Col>
           <Col md={9}>
             <DialogViewer
-              lines={this.state.dialog}
+              dialog={this.state.dialog}
+              height={this.state.childHeight}
             />
           </Col>
         </Row>

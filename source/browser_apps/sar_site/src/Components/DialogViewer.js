@@ -64,9 +64,8 @@ export default class DialogViewer extends React.Component {
               <Row key={i}>
                 <Col style={{
                   backgroundColor:'white',
-                  border:'2px solid black',
-                  paddingTop:'20px',
-                  paddingBottom:'20px',
+                  paddingTop:'0px',
+                  paddingBottom:'5px',
                   paddingLeft:'100px',
                   paddingRight:'100px'
                 }}>
@@ -87,42 +86,62 @@ export default class DialogViewer extends React.Component {
           return (
             <Row key={i}>
               <Col style={{
-                paddingLeft: '200px',
-                paddingTop: '5px',
+                paddingLeft: '100px',
+                paddingRight: '100px',
+                paddingTop: '0px',
                 paddingBottom: '5px',
+                textAlign:"center",
                 backgroundColor:'white'}}>
                 ({item.Line})
               </Col>
             </Row>);
-        } else {
+        } else if (item.LineType === 'Transition') {
+          return (
+            <Row key={i}>
+              <Col style={{
+                paddingTop: '5px',
+                paddingBottom: '5px',
+                backgroundColor:'white'}}>
+                {item.Line}
+              </Col>
+            </Row>);
+        }
+        else {
           console.info(item);
-
-          return (<Row key={i}/>)
+          return (<Row key={i}><Col>Unknown</Col></Row>)
         }
       });
 
-      return(
-        <Col>
-          {rows}
-        </Col>);
+      return (
+        <Row style={{
+          overflow:"scroll",
+          height:this.props.height - 60,
+          paddingRight:'20px',
+          paddingLeft:'20px'
+        }}>
+          <Col>
+            {rows}
+          </Col>
+        </Row>);
     }
 
     return(
-      <Col/>);
+      <Row/>);
   }
 
   render() {
     return (
-      <Row style={{marginLeft:0, marginRight:0, height:this.props.height}}>
+      <Row style={{
+        marginLeft:0,
+        marginRight:0,
+        height:this.props.height}}>
         <Col>
           <Row>
             <Col>
               <h4>Dialog</h4>
             </Col>
           </Row>
-          <Row>
-            { this.renderDialog(this.state.dialog) }
-          </Row>
+          { this.renderDialog(this.state.dialog) }
         </Col>
       </Row>
     );

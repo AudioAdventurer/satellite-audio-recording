@@ -32,7 +32,6 @@ namespace SAR.Apps.Server.Modules
                     string connect = $"Filename={filename};Connection=direct;Upgrade=true";
                     
                     return new LiteDatabase(connect);
-
                 }).As<LiteDatabase>()
                 .SingleInstance();
 

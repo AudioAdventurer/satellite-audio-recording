@@ -105,10 +105,20 @@ export default class DialogViewer extends React.Component {
                 {item.Line}
               </Col>
             </Row>);
+        } else if (item.LineType === 'PageBreak') {
+          return (
+            <Row key={i}>
+              <Col style={{
+                paddingTop: '5px',
+                paddingBottom: '5px',
+                backgroundColor:'white'}}>
+                <hr/>
+              </Col>
+            </Row>);
         }
         else {
           console.info(item);
-          return (<Row key={i}><Col>Unknown</Col></Row>)
+          return (<Row key={i}><Col>Unknown: {item.LineType}</Col></Row>)
         }
       });
 

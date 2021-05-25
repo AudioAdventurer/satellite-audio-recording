@@ -103,7 +103,7 @@ export default class Character extends Component {
       let projectId = this.state.projectId;
       let characterId = this.state.characterId;
       if (characterId==='new'){
-        characterId = uuid.v4();
+        characterId = uuid();
       }
 
       let performerPersonId = this.state.performerPersonId;

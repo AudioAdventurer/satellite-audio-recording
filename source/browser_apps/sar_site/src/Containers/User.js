@@ -69,12 +69,12 @@ export default class User extends Component {
     try {
       let userId = this.state.userId;
       if (userId==='new'){
-        userId = uuid.v4();
+        userId = uuid();
       }
 
       let personId = this.state.personId;
       if (personId === '') {
-        personId = uuid.v4();
+        personId = uuid();
       }
 
       let givenName = this.state.givenName;

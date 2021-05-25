@@ -53,7 +53,9 @@ namespace SAR.Modules.Script.Services
         {
             Dictionary<Guid, Project> projects = new Dictionary<Guid, Project>();
 
-            var access = _projectAccessRepo.GetByPerson(personId);
+            var access = _projectAccessRepo
+                .GetByPerson(personId)
+                .ToList();
 
             foreach (var projectAccess in access)
             {

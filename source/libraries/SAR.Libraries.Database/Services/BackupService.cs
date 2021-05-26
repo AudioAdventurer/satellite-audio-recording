@@ -43,6 +43,8 @@ namespace SAR.Libraries.Database.Services
         {
             if (!_running)
             {
+                _running = true;
+
                 Thread t = new Thread(Run);
                 t.Start();
             }

@@ -9,7 +9,7 @@
         public const string MULTI_LINE_ACTION_PATTERN = @"\n{2}(([^a-z\n:]+?[\.\?,\s!\*_]*?)\n{2}){1,2}";
         public const string CHARACTER_CUE_PATTERN = @"(?<=\n)([ \t]*[^<>a-z\s\/\n][^<>a-z:!\?\n]*[^<>a-z\(!\?:,\n\.][ \t]?)\n{1}(?!\n)";
         public const string DIALOGUE_PATTERN = @"(<(Character|Parenthetical)>[^<>\n]+<\/(Character|Parenthetical)>)([^<>]*?)(?=\n{2}|\n{1}<Parenthetical>)";
-        public const string PARENTHETICAL_PATTERN = @"\n(\(([^<>]*?)\)[\s]?)";
+        public const string PARENTHETICAL_PATTERN = @"(\(([^<>]*?)\)[\s]?)";
         public const string TRANSITION_PATTERN = @"\n([\*_]*([^<>\na-z]*TO:|FADE TO BLACK\.|FADE OUT\.|CUT TO BLACK\.)[\*_]*)\n";
         public const string FORCED_TRANSITION_PATTERN = @"\n((&gt;|>)\s*[^<>\n]+)\n";
         public const string FALSE_TRANSITION_PATTERN = @"\n((&gt;|>)\s*[^<>\n]+(&lt;\s*))\n";

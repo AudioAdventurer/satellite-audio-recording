@@ -6,6 +6,7 @@ using SAR.Libraries.Common.Helpers;
 using SAR.Libraries.Common.Interfaces;
 using SAR.Libraries.Common.Logging;
 using SAR.Libraries.Common.Storage;
+using SAR.Libraries.Database.Services;
 
 namespace SAR.Apps.Server.Modules
 {
@@ -33,6 +34,17 @@ namespace SAR.Apps.Server.Modules
                     
                     return new LiteDatabase(connect);
                 }).As<LiteDatabase>()
+                .SingleInstance();
+
+            builder.Register(c =>
+                {
+                    string filename = Path.Combine(_config.DbFolder, "sar.db");
+                    string backupFolder = Path.Combine(_config.DbFolder, "backups");
+
+                    DirectoryHelper.EnsureDirectory(backupFolder);
+
+                    return new BackupService(filename, backupFolder, 3);
+                }).As<BackupService>()
                 .SingleInstance();
 
             builder.Register(c => new JwtService(_config.JwtSecret))

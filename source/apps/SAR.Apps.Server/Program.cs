@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using SAR.Libraries.Database.Services;
 using ConsoleTraceListener = SAR.Libraries.Common.Trace.ConsoleTraceListener;
 
 namespace SAR.Apps.Server
@@ -75,7 +76,12 @@ namespace SAR.Apps.Server
                 })
                 .Build();
 
+            var backupService = host.Services.GetService<BackupService>();
+            backupService.Start();
+
             host.Run();
+
+            backupService.Stop();
         }
     }
 }
